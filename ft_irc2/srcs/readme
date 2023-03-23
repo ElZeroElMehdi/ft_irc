@@ -1,0 +1,67 @@
+Socket programming in C++98 involves using the standard C library functions for networking, such as socket(), bind(), listen(), accept(), connect(), send(), and recv(). These functions allow you to create, connect, and communicate between sockets over a network.
+
+Here are some steps to create a simple socket program in C++98:
+
+Include the necessary headers:
+c++
+Copy code
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+Create a socket:
+c++
+Copy code
+int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+This creates a socket file descriptor (sockfd) using the IPv4 address family (AF_INET), the TCP protocol (SOCK_STREAM), and a default protocol (0).
+
+Bind the socket to an address and port:
+c++
+Copy code
+struct sockaddr_in servaddr;
+memset(&servaddr, 0, sizeof(servaddr));
+servaddr.sin_family = AF_INET;
+servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+servaddr.sin_port = htons(PORT);
+
+bind(sockfd, (struct sockaddr*)&servaddr, sizeof(servaddr));
+This sets up a sockaddr_in structure (servaddr) with the server's address and port, and binds the socket to that address and port.
+
+Listen for incoming connections:
+c++
+Copy code
+listen(sockfd, SOMAXCONN);
+This puts the socket in listening mode, with a maximum queue length of SOMAXCONN pending connections.
+
+Accept incoming connections:
+c++
+Copy code
+struct sockaddr_in clientaddr;
+socklen_t clientaddrlen = sizeof(clientaddr);
+
+int connfd = accept(sockfd, (struct sockaddr*)&clientaddr, &clientaddrlen);
+This accepts an incoming connection request and creates a new socket file descriptor (connfd) to handle the connection.
+
+Send and receive data:
+c++
+Copy code
+char buffer[MAXLINE];
+int n;
+
+n = recv(connfd, buffer, MAXLINE, 0);
+send(connfd, buffer, n, 0);
+This receives data from the connection socket (connfd) into a buffer, and sends the same data back to the client.
+
+Close the connection:
+c++
+Copy code
+close(connfd);
+This closes the connection socket.
+
+Close the server socket:
+c++
+Copy code
+close(sockfd);
+This closes the server socket.
+
+Note that these are just the basic steps for creating a simple socket program in C++98. Depending on the specific requirements of your project, you may need to use additional functions or data structures to handle more complex network communication.
