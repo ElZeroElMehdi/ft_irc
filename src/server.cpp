@@ -81,6 +81,7 @@ bool Server::events()
             }
             this->addFd(newClient);
             std::cout << "one client connectd\n";
+            send(newClient, "welcome to my server\n", 21, 0);
         }
         // addClientSockettoFdSet();
     }
