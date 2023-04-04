@@ -106,13 +106,14 @@ void Server::chat()
 {
     for (size_t i = 0; i < this->allFd.size(); i++)
     {
-        // this->allFd.at(i).revents & POLLIN
-        if (this->allFd.at(i).revents & POLLIN)
+        // monitoring multiple file descriptors to see if any of them have become ready for I/O operations.
+        if (this->allFd.at(i).revents & POLLIN && (this->allFd.at(i).fd != this->fd_server))
         {
             char msg[1024];
             memset(msg, 0, 1024);
             recv(this->allFd[i].fd, msg, 1024, 0);
             std::cout << "client"<<this->allFd[i].fd<<" : "<< msg;
+            
         }
     }
 }

@@ -8,8 +8,6 @@ int main(int ac, char **argv)
             throw std::runtime_error("invlaide arguments");
         Server s(1337,"ptr");
         s.creatServer();
-        while(1)
-            s.chat();
     }
     catch (const std::exception &e)
     {
