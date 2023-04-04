@@ -83,7 +83,6 @@ bool Server::events()
             std::cout << "one client connectd\n";
             send(newClient, "welcome to my server\n", 21, 0);
         }
-        // addClientSockettoFdSet();
     }
     return true;
 }
@@ -107,14 +106,12 @@ void Server::chat()
 {
     for (size_t i = 0; i < this->allFd.size(); i++)
     {
-        // monitoring multiple file descriptors to see if any of them have become ready for I/O operations.
         if (this->allFd.at(i).revents & POLLIN && (this->allFd.at(i).fd != this->fd_server))
         {
             char msg[1024];
             memset(msg, 0, 1024);
             recv(this->allFd[i].fd, msg, 1024, 0);
             std::cout << "client"<<this->allFd[i].fd<<" : "<< msg;
-            
         }
     }
 }
