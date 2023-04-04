@@ -107,7 +107,7 @@ void Server::chat()
     for (size_t i = 0; i < this->allFd.size(); i++)
     {
         // this->allFd.at(i).revents & POLLIN
-        if (this->allFd.at(i) && (i != 0))
+        if (this->allFd.at(i).revents & POLLIN)
         {
             char msg[1024];
             memset(msg, 0, 1024);
