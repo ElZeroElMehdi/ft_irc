@@ -93,7 +93,6 @@ void Server::creatServer()
     this->bindSocket();
     this->listenConix();
     this->addFd(this->fd_server);
-    // poll event
     while (1)
     {
         if (!this->events())
@@ -111,7 +110,22 @@ void Server::chat()
             char msg[1024];
             memset(msg, 0, 1024);
             recv(this->allFd[i].fd, msg, 1024, 0);
-            std::cout << "client"<<this->allFd[i].fd<<" : "<< msg;
+            std::cout << "client" << this->allFd[i].fd << " : " << msg;
+            for (size_t j = 0; j < this->allFd.size(); j++)
+            {
+                if (this->allFd.at(j).fd != this->fd_server && this->allFd.at(j).fd != this->allFd.at(i).fd)
+                {
+                    std::string msge = "client" + std::to_string(this->allFd[i].fd) + " : " + msg;
+                    send(this->allFd[j].fd, msge.c_str(), msge.length(), 0);
+                }
+            }
+            // if (this->allFd.at(i).revents & POLLHUP)
+            // {
+            //     std::string msge = "client" + std::to_string(this->allFd[i].fd) + " : " + "disconnected\n";
+            //     send(this->allFd[i].fd, msge.c_str(), msge.length(), 0);
+            //     close(this->allFd[i].fd);
+            //     // delete this->allFd[i];
+            // }
         }
     }
 }
