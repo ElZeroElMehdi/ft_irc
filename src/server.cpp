@@ -58,6 +58,10 @@ void Server::addFd(int fd)
     newFd.fd = fd;
     newFd.events = POLLIN;
     this->allFd.push_back(newFd);
+
+    // why???
+    Clinets newClient(fd);
+    this->cl.insert(std::make_pair(fd, newClient));
 }
 
 bool Server::events()
@@ -107,9 +111,12 @@ void Server::chat()
     {
         if (this->allFd.at(i).revents & POLLIN && (this->allFd.at(i).fd != this->fd_server))
         {
+            if (this->cl.find(this->allFd[i].fd)->second.getRegistred() == false)
+                send(this->allFd[i].fd, "please enter your user name and passWord and set youre nickname\n", 65, 0);
             char msg[1024];
             memset(msg, 0, 1024);
             recv(this->allFd[i].fd, msg, 1024, 0);
+            this->cl.find(this->allFd[i].fd)->second.setNick(msg);
             std::cout << "client" << this->allFd[i].fd << " : " << msg;
             for (size_t j = 0; j < this->allFd.size(); j++)
             {
@@ -119,13 +126,6 @@ void Server::chat()
                     send(this->allFd[j].fd, msge.c_str(), msge.length(), 0);
                 }
             }
-            // if (this->allFd.at(i).revents & POLLHUP)
-            // {
-            //     std::string msge = "client" + std::to_string(this->allFd[i].fd) + " : " + "disconnected\n";
-            //     send(this->allFd[i].fd, msge.c_str(), msge.length(), 0);
-            //     close(this->allFd[i].fd);
-            //     // delete this->allFd[i];
-            // }
         }
     }
 }

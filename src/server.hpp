@@ -2,7 +2,7 @@
 # define SERVER_HPP
 
 #include "includes.hpp"
-
+#include "client.hpp"
 class Server{
     private:
         int fd_server;
@@ -10,6 +10,8 @@ class Server{
         std::string pw;
         struct sockaddr_in ConAddr;
         std::vector<pollfd> allFd;
+        std::map<int, Clinets> cl;
+
     public:
         Server(int pt ,std::string password);
         //seters

@@ -1,5 +1,5 @@
+#include "includes.hpp"
 #include "server.hpp"
-
 int main(int ac, char **argv)
 {
     try

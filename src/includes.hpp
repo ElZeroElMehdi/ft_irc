@@ -12,6 +12,11 @@
 #include <poll.h>
 
 #include <vector>
+#include <map>
 #include <string.h>
+
+// #include "channels.hpp"
+// #include "client.hpp"
+// #include "server.hpp"
 
 #endif
