@@ -29,6 +29,11 @@ bool Clinets::getRegistred() const
     return this->isRegistred;
 }
 
+std::string Clinets::getNick()
+{
+    return this->nick;
+}
+
 Clinets::Clinets(std::string _user, std::string _nick, int _fd)
 {
     if(!_user.empty())

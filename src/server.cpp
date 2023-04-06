@@ -111,11 +111,23 @@ void Server::chat()
     {
         if (this->allFd.at(i).revents & POLLIN && (this->allFd.at(i).fd != this->fd_server))
         {
-            if (this->cl.find(this->allFd[i].fd)->second.getRegistred() == false)
-                send(this->allFd[i].fd, "please enter your user name and passWord and set youre nickname\n", 65, 0);
             char msg[1024];
             memset(msg, 0, 1024);
+
+            // if (this->cl.find(this->allFd[i].fd)->second.getRegistred() == false)
+            //else everthing should be send to parsser.
             recv(this->allFd[i].fd, msg, 1024, 0);
+            std::string msge = msg;
+            size_t pos = msge.find(" ");
+            std::cout <<"*"<< msge.substr(0, pos)<<"*" << std::endl;
+            if (pos != std::string::npos && msge.substr(0, pos) == "nick")
+                exit(0);
+            else if (pos == std::string::npos && msge.substr(0, 4) == "nick")
+            {
+                std::cout << "plese " << std::endl;
+                exit(0);
+            }
+
             this->cl.find(this->allFd[i].fd)->second.setNick(msg);
             std::cout << "client" << this->allFd[i].fd << " : " << msg;
             for (size_t j = 0; j < this->allFd.size(); j++)
@@ -133,3 +145,46 @@ void Server::chat()
 Server::~Server()
 {
 }
+
+//commands
+
+Server::Commands::Commands(std::string _command, std::vector<std::string> _param)
+{
+    this->command = _command;
+    this->param = _param;
+}
+
+void Server::Commands::nick(std::string _nick, Clinets &c)
+{
+    if (_nick.length() > 9)
+        throw std::runtime_error("nick name is too long");
+    c.setNick(_nick);
+}
+
+void Server::Commands::user(std::string _user, Clinets &c)
+{
+    c.setUser(_user);
+}
+
+
+/*
+            GRAMMER
+<command> ::= <message> | <join-command> | <part-command> | <quit-command> | <nick-command>
+
+<message> ::= PRIVMSG <recipient> <text> //
+<recipient> ::= <channel> | <user>
+
+<join-command> ::= JOIN <channel>
+<channel> ::= "#" <channel-name>
+<channel-name> ::= <letter> { <letter> | <digit> | "-" }
+
+<part-command> ::= PART <channel>
+
+<quit-command> ::= QUIT [ <message> ]
+
+<nick-command> ::= NICK <nickname>
+<nickname> ::= <letter> { <letter> | <digit> | "-" | "_" }
+
+<text> ::= <any printable character except CR or LF> { <any printable character except CR or LF> }
+
+*/

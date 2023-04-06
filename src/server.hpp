@@ -24,6 +24,16 @@ class Server{
         bool events();
         void creatServer();
         void chat();
+        class Commands
+        {
+            private:
+                std::string command;
+                std::vector<std::string> param;
+            public:
+                Commands(std::string _command, std::vector<std::string> _param);
+                void nick(std::string _nick, Clinets &c);
+                void user(std::string _user, Clinets &c);
+        };
         ~Server();
 };
 
