@@ -18,9 +18,9 @@ class Clinets
         void setFd(int fd);
         void setRegistred(bool _isRegistred);
         bool getRegistred() const;
-        std::string getNick();
-        std::string getUser();
-        int getFd();
+        std::string getNick() const;
+        std::string getUser() const;
+        int getFd() const;
         // void addChannel(Channels channel);
         bool checkIfRegistred();
         ~Clinets();

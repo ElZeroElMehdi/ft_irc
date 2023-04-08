@@ -118,16 +118,33 @@ void Server::chat()
             memset(msg, 0, 1024);
             if (this->cl.find(this->allFd[i].fd)->second.getRegistred() == true)
             {
+                
                 recv(this->allFd[i].fd, msg, 1024, 0);
-                std::cout << this->cl.find(this->allFd[i].fd)->second.getNick() << " : " << msg;
-                for (size_t j = 0; j < this->allFd.size(); j++)
+                std::string cmd = msg;
+                if (cmd.substr(0, 4) == "QUIT" || cmd.substr(0, 4) == "quit")
                 {
-                    if (this->allFd.at(j).fd != this->fd_server && this->allFd.at(j).fd != this->allFd.at(i).fd && this->cl.find(this->allFd[j].fd)->second.getRegistred() == true)
-                    {
-                        std::string msge = this->cl.find(this->allFd[i].fd)->second.getNick() + " : " + msg;
-                        send(this->allFd[j].fd, msge.c_str(), msge.length(), 0);
-                    }
+                    std::string s = "bye bye\n";
+                    send(this->allFd[i].fd, s.c_str(), s.length(), 0);
+                    close(this->allFd[i].fd);
+                    this->allFd.erase(this->allFd.begin() + i);
+                    this->cl.erase(this->allFd[i].fd);
+                    break;
                 }
+                else if (cmd.substr(0, 4) == "join" || cmd.substr(0, 4) == "JOIN")
+                {
+                    this->cha.push_back(Channels(cmd.substr(5, cmd.length() - 5), this->cl.find(this->allFd[i].fd)->second.getFd()));
+                    std::string s = "you join to " + cmd.substr(5, cmd.length() - 5) + "\n";
+                    // this->cl.find(this->allFd[i].fd)->second.
+                }
+            //     std::cout << this->cl.find(this->allFd[i].fd)->second.getNick() << " : " << msg;
+            //     for (size_t j = 0; j < this->allFd.size(); j++)
+            //     {
+            //         if (this->allFd.at(j).fd != this->fd_server && this->allFd.at(j).fd != this->allFd.at(i).fd && this->cl.find(this->allFd[j].fd)->second.getRegistred() == true)
+            //         {
+            //             std::string msge = this->cl.find(this->allFd[i].fd)->second.getNick() + " : " + msg;
+            //             send(this->allFd[j].fd, msge.c_str(), msge.length(), 0);
+            //         }
+            //     }
             }
             else
             {
@@ -144,7 +161,7 @@ void Server::chat()
                     send(this->allFd[i].fd, "you are registred\n", 18, 0);
             }
         }
-        if (this->allFd.at(i).revents & POLLHUP)
+        else if (this->allFd.at(i).revents & POLLHUP)
         {
             std::cout << "disconnected" << std::endl;
             close(this->allFd[i].fd);
@@ -156,6 +173,7 @@ void Server::chat()
 
 Server::~Server()
 {
+    close(this->fd_server);
 }
 
 // commands

@@ -30,7 +30,7 @@ bool Clinets::getRegistred() const
     return this->isRegistred;
 }
 
-std::string Clinets::getNick()
+std::string Clinets::getNick() const
 {
     return this->nick;
 }
@@ -47,6 +47,15 @@ Clinets::Clinets(std::string _user, std::string _nick, int _fd)
         throw std::runtime_error("nick is empty");
     this->setFd(_fd);
     this->isRegistred = false;
+}
+
+int Clinets::getFd() const
+{
+    return this->client_fd;
+}
+
+std::string Clinets::getUser() const{
+    return this->user;
 }
 
 Clinets::~Clinets()

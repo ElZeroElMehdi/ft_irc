@@ -13,9 +13,14 @@ void Channels::addUser(int fd)
 
 void Channels::removeUser(int fd)
 {
-    std::vector<int>::iterator it = std::find(this->users.begin(), this->users.end(), fd);
-    if (it != this->users.end())
-        this->users.erase(it);
+    for (int i = 0; i < this->users.size(); i++)
+    {
+        if (this->users[i] == fd)
+        {
+            this->users.erase(this->users.begin() + i);
+            break;
+        }
+    }
 }
 
 std::string Channels::getName() const

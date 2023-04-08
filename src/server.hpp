@@ -3,6 +3,7 @@
 
 #include "includes.hpp"
 #include "client.hpp"
+#include "channels.hpp"
 class Server{
     private:
         int fd_server;
@@ -11,7 +12,7 @@ class Server{
         struct sockaddr_in ConAddr;
         std::vector<pollfd> allFd;
         std::map<int, Clinets> cl;
-
+        std::vector<Channels> cha;
     public:
         Server(int pt ,std::string password);
         //seters
