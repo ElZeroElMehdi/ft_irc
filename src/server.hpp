@@ -25,6 +25,7 @@ class Server{
         bool events();
         void creatServer();
         void chat();
+        int findClinet(std::string nickName);
         class Commands
         {
             private:
