@@ -83,9 +83,12 @@ bool Server::events()
                 close(this->fd_server);
                 return false;
             }
+
             this->addFd(newClient);
             std::cout << "one client connectd\n";
             send(newClient, "welcome to my server\n", 21, 0);
+            std::string s = "please registre first\n send:\n NICK <nick>\n\r USERNAME <username>\n\r for registertion\n";
+            send(newClient, s.c_str(), s.length(), 0);
         }
     }
     return true;
@@ -99,9 +102,9 @@ void Server::creatServer()
     this->addFd(this->fd_server);
     while (1)
     {
-        if (!this->events())
-            break;
-        this->chat();
+        if (this->events())
+            this->chat();
+        // break;
     }
 }
 
@@ -113,31 +116,40 @@ void Server::chat()
         {
             char msg[1024];
             memset(msg, 0, 1024);
-
-            // if (this->cl.find(this->allFd[i].fd)->second.getRegistred() == false)
-            //else everthing should be send to parsser.
-            recv(this->allFd[i].fd, msg, 1024, 0);
-            std::string msge = msg;
-            size_t pos = msge.find(" ");
-            std::cout <<"*"<< msge.substr(0, pos)<<"*" << std::endl;
-            if (pos != std::string::npos && msge.substr(0, pos) == "nick")
-                exit(0);
-            else if (pos == std::string::npos && msge.substr(0, 4) == "nick")
+            if (this->cl.find(this->allFd[i].fd)->second.getRegistred() == true)
             {
-                std::cout << "plese " << std::endl;
-                exit(0);
-            }
-
-            this->cl.find(this->allFd[i].fd)->second.setNick(msg);
-            std::cout << "client" << this->allFd[i].fd << " : " << msg;
-            for (size_t j = 0; j < this->allFd.size(); j++)
-            {
-                if (this->allFd.at(j).fd != this->fd_server && this->allFd.at(j).fd != this->allFd.at(i).fd)
+                recv(this->allFd[i].fd, msg, 1024, 0);
+                std::cout << this->cl.find(this->allFd[i].fd)->second.getNick() << " : " << msg;
+                for (size_t j = 0; j < this->allFd.size(); j++)
                 {
-                    std::string msge = "client" + std::to_string(this->allFd[i].fd) + " : " + msg;
-                    send(this->allFd[j].fd, msge.c_str(), msge.length(), 0);
+                    if (this->allFd.at(j).fd != this->fd_server && this->allFd.at(j).fd != this->allFd.at(i).fd && this->cl.find(this->allFd[j].fd)->second.getRegistred() == true)
+                    {
+                        std::string msge = this->cl.find(this->allFd[i].fd)->second.getNick() + " : " + msg;
+                        send(this->allFd[j].fd, msge.c_str(), msge.length(), 0);
+                    }
                 }
             }
+            else
+            {
+                std::string s = "please registre first\n send:\n NICK <nick>\n\r USERNAME <username>\n\r for registertion\n";
+                send(this->allFd[i].fd, s.c_str(), s.length(), 0);
+                recv(this->allFd[i].fd, msg, 1024, 0);
+                std::string msgg = msg;
+                //commands : NICK <nick> , USERNAME <username>
+                if (msgg.substr(0, 4) == "NICK" || msgg.substr(0, 4) == "nick")
+                    this->cl.find(this->allFd[i].fd)->second.setNick(msgg.substr(5, msgg.length() - 6));
+                if (msgg.substr(0, 8) == "username" || msgg.substr(0, 8) == "USERNAME")
+                    this->cl.find(this->allFd[i].fd)->second.setUser(msgg.substr(9, msgg.length() - 10));
+                if(this->cl.find(this->allFd[i].fd)->second.checkIfRegistred())
+                    send(this->allFd[i].fd, "you are registred\n", 18, 0);
+            }
+        }
+        if (this->allFd.at(i).revents & POLLHUP)
+        {
+            std::cout << "disconnected" << std::endl;
+            close(this->allFd[i].fd);
+            this->allFd.erase(this->allFd.begin() + i);
+            this->cl.erase(this->allFd[i].fd);
         }
     }
 }
@@ -146,7 +158,7 @@ Server::~Server()
 {
 }
 
-//commands
+// commands
 
 Server::Commands::Commands(std::string _command, std::vector<std::string> _param)
 {
@@ -154,6 +166,17 @@ Server::Commands::Commands(std::string _command, std::vector<std::string> _param
     this->param = _param;
 }
 
+Server::Commands::Commands(std::string _command, Clinets &c)
+{
+    size_t pos = _command.find(" ");
+    if (pos != std::string::npos && _command.substr(0, pos) == "nick")
+        exit(0);
+    else if (pos == std::string::npos && _command.substr(0, 4) == "nick")
+    {
+        std::cout << "plese " << std::endl;
+        exit(0);
+    }
+}
 void Server::Commands::nick(std::string _nick, Clinets &c)
 {
     if (_nick.length() > 9)
@@ -165,7 +188,6 @@ void Server::Commands::user(std::string _user, Clinets &c)
 {
     c.setUser(_user);
 }
-
 
 /*
             GRAMMER

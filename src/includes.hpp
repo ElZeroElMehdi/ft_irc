@@ -15,6 +15,13 @@
 #include <map>
 #include <string.h>
 
+struct cmd
+{
+    std::string command;
+    std::vector<std::string> param;
+    std::string msg;
+};
+
 // #include "channels.hpp"
 // #include "client.hpp"
 // #include "server.hpp"
