@@ -1,10 +1,11 @@
 #ifndef SERVER_HPP
-# define SERVER_HPP
+#define SERVER_HPP
 
 #include "includes.hpp"
 #include "client.hpp"
 #include "channels.hpp"
-class Server{
+class Server
+{
     private:
         int fd_server;
         int port;
@@ -13,11 +14,12 @@ class Server{
         std::vector<pollfd> allFd;
         std::map<int, Clinets> cl;
         std::vector<Channels> cha;
+
     public:
-        Server(int pt ,std::string password);
-        //seters
+        Server(int pt, std::string password);
+        // seters
         void setPort(int pr);
-        //methods
+        // methods
         void createSocket();
         void bindSocket();
         void listenConix();
@@ -26,18 +28,7 @@ class Server{
         void creatServer();
         void chat();
         int findClinet(std::string nickName);
-        class Commands
-        {
-            private:
-                std::string command;
-                std::vector<std::string> param;
-            public:
-                Commands(std::string _command, std::vector<std::string> _param);
-                Commands(std::string _command, Clinets &c);
-                void nick(std::string _nick, Clinets &c);
-                void user(std::string _user, Clinets &c);
-        };
-        ~Server();
+        ~Server(); 
 };
 
 #endif

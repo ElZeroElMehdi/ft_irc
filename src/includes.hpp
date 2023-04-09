@@ -17,9 +17,9 @@
 
 struct cmd
 {
-    std::string command;
-    std::vector<std::string> param;
-    std::string msg;
+    std::string command;// command
+    std::vector<std::string> target;// users or channel
+    std::string msg;//msg or empty
 };
 
 // #include "channels.hpp"

@@ -142,18 +142,9 @@ void Server::chat()
                 {
                     std::string to = cmd.substr(7, cmd.find(" ", 7) - 7);
                     int tofd = this->findClinet(to);
-                    to =this->cl.find(tofd)->second.getNick() +" : "+ cmd.substr(cmd.find(" ", 7) + 1, cmd.length() - cmd.find(" ", 7) - 1);
+                    to =this->cl.find(this->allFd[i].fd)->second.getNick() +" : "+ cmd.substr(cmd.find(" ", 7) + 1, cmd.length() - cmd.find(" ", 7) - 1);
                     send(tofd, to.c_str(), to.length(), 0);
                 }
-            //     std::cout << this->cl.find(this->allFd[i].fd)->second.getNick() << " : " << msg;
-            //     for (size_t j = 0; j < this->allFd.size(); j++)
-            //     {
-            //         if (this->allFd.at(j).fd != this->fd_server && this->allFd.at(j).fd != this->allFd.at(i).fd && this->cl.find(this->allFd[j].fd)->second.getRegistred() == true)
-            //         {
-            //             std::string msge = this->cl.find(this->allFd[i].fd)->second.getNick() + " : " + msg;
-            //             send(this->allFd[j].fd, msge.c_str(), msge.length(), 0);
-            //         }
-            //     }
             }
             else
             {
@@ -170,13 +161,13 @@ void Server::chat()
                     send(this->allFd[i].fd, "you are registred\n", 18, 0);
             }
         }
-        else if (this->allFd.at(i).revents & POLLHUP)
-        {
-            std::cout << "disconnected" << std::endl;
-            close(this->allFd[i].fd);
-            this->allFd.erase(this->allFd.begin() + i);
-            this->cl.erase(this->allFd[i].fd);
-        }
+        // else if (this->allFd.at(i).revents & POLLHUP)
+        // {
+        //     std::cout << "disconnected" << std::endl;
+        //     close(this->allFd[i].fd);
+        //     this->allFd.erase(this->allFd.begin() + i);
+        //     this->cl.erase(this->allFd[i].fd);
+        // }
     }
 }
 
@@ -195,36 +186,6 @@ Server::~Server()
     close(this->fd_server);
 }
 
-// commands
-
-Server::Commands::Commands(std::string _command, std::vector<std::string> _param)
-{
-    this->command = _command;
-    this->param = _param;
-}
-
-Server::Commands::Commands(std::string _command, Clinets &c)
-{
-    size_t pos = _command.find(" ");
-    if (pos != std::string::npos && _command.substr(0, pos) == "nick")
-        exit(0);
-    else if (pos == std::string::npos && _command.substr(0, 4) == "nick")
-    {
-        std::cout << "plese " << std::endl;
-        exit(0);
-    }
-}
-void Server::Commands::nick(std::string _nick, Clinets &c)
-{
-    if (_nick.length() > 9)
-        throw std::runtime_error("nick name is too long");
-    c.setNick(_nick);
-}
-
-void Server::Commands::user(std::string _user, Clinets &c)
-{
-    c.setUser(_user);
-}
 
 /*
             GRAMMER
