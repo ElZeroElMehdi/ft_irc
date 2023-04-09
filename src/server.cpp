@@ -123,6 +123,8 @@ void Server::chat()
                 if (cmd.substr(0, 4) == "QUIT" || cmd.substr(0, 4) == "quit")
                 {
                     std::string s = "bye bye\n";
+                    if (this->cl.find(this->allFd[i].fd)->second.getRegistred() == true)
+                        std::cout << this->cl.find(this->allFd[i].fd)->second.getNick() << " leave\n";
                     send(this->allFd[i].fd, s.c_str(), s.length(), 0);
                     close(this->allFd[i].fd);
                     this->allFd.erase(this->allFd.begin() + i);
@@ -131,17 +133,17 @@ void Server::chat()
                 }
                 else if (cmd.substr(0, 4) == "join" || cmd.substr(0, 4) == "JOIN")
                 {
+                    std::cout << "join" << std::endl;
                     this->cha.push_back(Channels(cmd.substr(5, cmd.length() - 5), this->cl.find(this->allFd[i].fd)->second.getFd()));
                     std::string s = "you join to " + cmd.substr(5, cmd.length() - 5) + "\n";
-                    // this->cl.find(this->allFd[i].fd)->second.
+                    send(this->allFd[i].fd, s.c_str(), s.length(), 0);
                 }
                 else if (cmd.substr(0, 6) == "prvmsg")
                 {
-                    std::cout << "prvmsg" << std::endl;
                     std::string to = cmd.substr(7, cmd.find(" ", 7) - 7);
-                    std::cout <<"*"<< to <<"*" <<std::endl;
                     int tofd = this->findClinet(to);
-                    send(tofd, cmd.substr(cmd.find(" ", 7) + 1, cmd.length() - cmd.find(" ", 7) - 1).c_str(), cmd.length() - cmd.find(" ", 7) - 1, 0);
+                    to =this->cl.find(tofd)->second.getNick() +" : "+ cmd.substr(cmd.find(" ", 7) + 1, cmd.length() - cmd.find(" ", 7) - 1);
+                    send(tofd, to.c_str(), to.length(), 0);
                 }
             //     std::cout << this->cl.find(this->allFd[i].fd)->second.getNick() << " : " << msg;
             //     for (size_t j = 0; j < this->allFd.size(); j++)
