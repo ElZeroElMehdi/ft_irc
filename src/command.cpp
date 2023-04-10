@@ -64,14 +64,14 @@ void sendTo(std::string nick, std::map<int, Clinets> &cls, std::string &msg)
 	}
 }
 
-// void Commands::nick(std::string _nick, Clinets &c)
-// {
-//     if (_nick.length() > 9)
-//         throw std::runtime_error("nick name is too long");
-//     c.setNick(_nick);
-// }
+void Commands::nick(std::string _nick, Clinets &c)
+{
+    if (_nick.length() > 9)
+        throw std::runtime_error("nick name is too long");
+    c.setNick(_nick);
+}
 
-// void Commands::user(std::string _user, Clinets &c)
-// {
-//     c.setUser(_user);
-// }
+void Commands::user(std::string _user, Clinets &c)
+{
+    c.setUser(_user);
+}
