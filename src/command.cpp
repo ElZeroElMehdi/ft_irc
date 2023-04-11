@@ -63,3 +63,18 @@ void sendTo(std::string nick, std::map<int, Clinets> &cls, std::string &msg)
 			send(cl->second.getFd(), msg.c_str(), msg.length(), 0);
 	}
 }
+<<<<<<< HEAD
+=======
+
+void Commands::nick(std::string _nick, Clinets &c)
+{
+    if (_nick.length() > 9)
+        throw std::runtime_error("nick name is too long");
+    c.setNick(_nick);
+}
+
+void Commands::user(std::string _user, Clinets &c)
+{
+    c.setUser(_user);
+}
+>>>>>>> 49465cee3ef0253cef05be76aa1fd792fa45e6b9
