@@ -4,6 +4,7 @@
 #include "includes.hpp"
 #include "client.hpp"
 #include "channels.hpp"
+#include "utiles.hpp"
 class Server
 {
     private:

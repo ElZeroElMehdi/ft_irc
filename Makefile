@@ -4,7 +4,7 @@ cpp = c++
 
 FLAGS = -Wall -Wextra -Werror -std=c++98
 
-SRCS = ./src/channels.cpp ./src/client.cpp ./src/main.cpp ./src/server.cpp
+SRCS = ./src/channels.cpp ./src/client.cpp ./src/main.cpp ./src/server.cpp ./src/utiles.cpp
 
 headers = c./src/includes.hpp
 

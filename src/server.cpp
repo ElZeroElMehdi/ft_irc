@@ -86,18 +86,10 @@ bool Server::events()
 
             this->addFd(newClient);
             std::cout << "one client connectd\n";
-            /*
-            std::cout << "***********************************************" << std::endl;
-            std::cout << "*              Welcome to My IRC               *" << std::endl;
-            std::cout << " << std::endl;
-            std::cout << "*                                             *" << std::endl;
-            std::cout << "*           Enter a command to begin           *" << std::endl;
-            std::cout << "*                                             *" << std::endl;
-            std::cout << "***********************************************" << std::endl;
-            */
-            send(newClient, "***********************************************\n*              Welcome to My IRC              *\n***********************************************\n*                                             *\n*           Enter a command to begin          *\n*                                             *\n***********************************************\n", 337, 0);
-            std::string s = "please registre first\n send:\n NICK <nick>\n\r USERNAME <username>\n\r for registertion\n";
+            std::string s = ":localhost NOTICE AUTH :*** Looking up your hostname...\n:localhost NOTICE AUTH :*** Found your hostname\n";
+            
             send(newClient, s.c_str(), s.length(), 0);
+            // send(newClient, s.c_str(), s.length(), 0);
         }
     }
     return true;
@@ -129,6 +121,7 @@ void Server::chat()
             {
                 recv(this->allFd[i].fd, msg, 1024, 0);
                 std::string cmd = msg;
+                std::cout << cmd << std::endl;
                 if (cmd.substr(0, 4) == "QUIT" || cmd.substr(0, 4) == "quit")
                 {
                     std::string s = "bye bye\n";
@@ -140,34 +133,21 @@ void Server::chat()
                     this->cl.erase(this->allFd[i].fd);
                     break;
                 }
-                // else if (cmd.substr(0, 4) == "join" || cmd.substr(0, 4) == "JOIN")
-                // {
-                //     std::cout << "join" << std::endl;
-                //     this->cha.push_back(Channels(cmd.substr(5, cmd.length() - 5), this->cl.find(this->allFd[i].fd)->second.getFd()));
-                //     std::string s = "you join to " + cmd.substr(5, cmd.length() - 5) + "\n";
-                //     send(this->allFd[i].fd, s.c_str(), s.length(), 0);
-                // }
-                // else if (cmd.substr(0, 6) == "prvmsg")
-                // {
-                //     std::string to = cmd.substr(7, cmd.find(" ", 7) - 7);
-                //     int tofd = this->findClinet(to);
-                //     to =this->cl.find(this->allFd[i].fd)->second.getNick() +" : "+ cmd.substr(cmd.find(" ", 7) + 1, cmd.length() - cmd.find(" ", 7) - 1);
-                //     send(tofd, to.c_str(), to.length(), 0);
-                // }
             }
             else
             {
-                std::string s = "please registre first\n send:\n NICK <nick>\n\r USERNAME <username>\n\r for registertion\n";
-                send(this->allFd[i].fd, s.c_str(), s.length(), 0);
                 recv(this->allFd[i].fd, msg, 1024, 0);
                 std::string msgg = msg;
-                // commands : NICK <nick> , USERNAME <username>
                 if (msgg.substr(0, 4) == "NICK" || msgg.substr(0, 4) == "nick")
                     this->cl.find(this->allFd[i].fd)->second.setNick(msgg.substr(5, msgg.length() - 6));
-                if (msgg.substr(0, 8) == "username" || msgg.substr(0, 8) == "USERNAME")
-                    this->cl.find(this->allFd[i].fd)->second.setUser(msgg.substr(9, msgg.length() - 10));
+                if (msgg.substr(0, 4) == "user" || msgg.substr(0, 4) == "USER")
+                    this->cl.find(this->allFd[i].fd)->second.setUser(msgg.substr(5, msgg.length() - 6));
                 if (this->cl.find(this->allFd[i].fd)->second.checkIfRegistred())
-                    send(this->allFd[i].fd, "you are registred\n", 18, 0);
+                {
+                    char ip[INET_ADDRSTRLEN];
+                    std::string s = generateMessage(this->cl.find(this->allFd[i].fd)->second.getNick(), inet_ntop(AF_INET, &this->ConAddr.sin_addr, ip, sizeof(ip)), "localhost");
+                    send(this->allFd[i].fd, s.c_str(), s.length(), 0);
+                }
             }
         }
         if (this->cl.find(this->allFd[i].fd)->second.getRegistred() == false && this->allFd.at(i).revents & POLLHUP)
