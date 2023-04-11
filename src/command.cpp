@@ -51,7 +51,7 @@ Commands::Commands(std::string _cmd, std::map<int, Clinets> &cls)
 			for (size_t i = 0 ;i < it->target.size();i++)
 				this->sendTo(it->target[i], cls, it->msg);
 		}
-		else if (it->command == "nick")
+		// else if (it->command == "nick")
 	}
 }
 
@@ -63,15 +63,3 @@ void sendTo(std::string nick, std::map<int, Clinets> &cls, std::string &msg)
 			send(cl->second.getFd(), msg.c_str(), msg.length(), 0);
 	}
 }
-
-// void Commands::nick(std::string _nick, Clinets &c)
-// {
-//     if (_nick.length() > 9)
-//         throw std::runtime_error("nick name is too long");
-//     c.setNick(_nick);
-// }
-
-// void Commands::user(std::string _user, Clinets &c)
-// {
-//     c.setUser(_user);
-// }

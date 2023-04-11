@@ -18,8 +18,8 @@
 struct cmd
 {
     std::string command;// command
-    std::vector<std::string> target;// users or channel
-    std::string msg;//msg or empty
+    std::vector<std::string> target;// users or channels
+    std::string msg;//msg or empty // :fvcz
 };
 
 // #include "channels.hpp"
