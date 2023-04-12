@@ -6,7 +6,7 @@ int main(int ac, char **argv)
     {
         if (ac != 3 || !argv[1] || !argv[2])
             throw std::runtime_error("invlaide arguments");
-        Server s(4242,"ptr");
+        Server s(argv[1], argv[2]);
         s.creatServer();
     }
     catch (const std::exception &e)

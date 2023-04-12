@@ -10,6 +10,7 @@ Clinets::Clinets(int fd) : client_fd(fd)
 void Clinets::setNick(std::string nick)
 {
     this->nick = nick;
+    std::cout << "limChat fuck u"<< std::endl;
 }
 void Clinets::setUser(std::string user)
 {

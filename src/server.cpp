@@ -1,10 +1,11 @@
 #include "server.hpp"
 
-Server::Server(int pt, std::string password)
+Server::Server(const char *pt, const char *password)
 {
-    if (pt < 1024 || pt > 65536)
-        throw std::runtime_error("wrrong port number");
-    this->port = pt;
+    int por = std::atoi(pt);
+    if (por < 1024 || por > 65536)
+        throw std::runtime_error("wrrong port number!");
+    this->port = por;
     this->pw = password;
 }
 
@@ -17,17 +18,17 @@ void Server::createSocket()
 {
     this->fd_server = socket(AF_INET, SOCK_STREAM, 0);
     if (this->fd_server == -1)
-        throw std::runtime_error(strerror(errno));
+        throw std::runtime_error("creating socket faild!"); //strerror(errno)
     int useval = 1;
     if (setsockopt(this->fd_server, SOL_SOCKET, SO_REUSEADDR, &useval, sizeof(useval)) == -1)
     {
         close(this->fd_server);
-        throw std::runtime_error("faild to set socket options socket");
+        throw std::runtime_error("faild to set socket options socket!");
     }
     if (fcntl(this->fd_server, F_SETFL, O_NONBLOCK) == -1)
     {
         close(this->fd_server);
-        throw std::runtime_error("faild to set change mode of socket");
+        throw std::runtime_error("faild to set change mode of socket!");
     }
 }
 void Server::bindSocket()
@@ -39,7 +40,7 @@ void Server::bindSocket()
     if (bind(this->fd_server, (struct sockaddr *)&this->ConAddr, sizeof(this->ConAddr)) != 0)
     {
         close(this->fd_server);
-        throw std::runtime_error("bind faild");
+        throw std::runtime_error("bind faild!");
     }
 }
 
@@ -48,7 +49,7 @@ void Server::listenConix()
     if (listen(this->fd_server, -1) == -1)
     {
         close(this->fd_server);
-        throw std::runtime_error(strerror(errno));
+        throw std::runtime_error("no connection comming!");//strerror(errno)
     }
 }
 
@@ -85,7 +86,7 @@ bool Server::events()
             }
 
             this->addFd(newClient);
-            std::cout << "one client connectd\n";
+            std::cout << newClient <<"  one client connected\n";
             std::string s = ":localhost NOTICE AUTH :*** Looking up your hostname...\n:localhost NOTICE AUTH :*** Found your hostname\n";
 
             send(newClient, s.c_str(), s.length(), 0);
@@ -158,7 +159,7 @@ void Server::chat()
             {
                 recv(this->allFd[i].fd, msg, 1024, 0);
                 std::string cmd = msg;
-                std::cout << "*> " << cmd << std::endl;
+                std::cout << "*****> " << cmd << std::endl;
                 // check if the command is valid
                 if (cmd.substr(0, 4) == "NICK" || cmd.substr(0, 4) == "nick")
                 {
@@ -198,12 +199,14 @@ void Server::chat()
                         std::string s = this->showReply(j + 1, this->allFd[i].fd);
                         send(this->allFd[i].fd, s.c_str(), s.length(), 0);
                     }
+                    std::string lastWelcomeReply = ":"+this->cl.find(this->allFd[i].fd)->second.getNick()+" MODE "+this->cl.find(this->allFd[i].fd)->second.getNick()+" :+iH\n";
+                    send(this->allFd[i].fd, lastWelcomeReply.c_str(), lastWelcomeReply.length(), 0);
                 }
             }
         }
         if (this->cl.find(this->allFd[i].fd)->second.getRegistred() == false && this->allFd.at(i).revents & POLLHUP)
         {
-            std::cout << "Client" << this->allFd[i].fd << " disconnected" << std::endl;
+            std::cout << "Client" << this->allFd[i].fd << " disconnected*" << std::endl;
             close(this->allFd[i].fd);
             this->allFd.erase(this->allFd.begin() + i);
             this->cl.erase(this->allFd[i].fd);

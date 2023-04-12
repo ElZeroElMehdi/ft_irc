@@ -17,7 +17,7 @@ class Server
         std::vector<Channels> cha;
 
     public:
-        Server(int pt, std::string password);
+        Server(const char *pt, const char *password);
         // seters
         void setPort(int pr);
         int getPort() const;
