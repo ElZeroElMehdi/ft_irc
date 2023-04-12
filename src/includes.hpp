@@ -15,16 +15,15 @@
 #include <map>
 #include <string.h>
 
-struct cmd
-{
-    std::string command;// command
-    std::vector<std::string> target;// users or channels
-    std::string msg;//msg or empty // :fvcz
-};
-
 // #include "channels.hpp"
 // #include "client.hpp"
 // #include "server.hpp"
 #include "replies.hpp"
 
+
+// utills
+std::string                 str_toupper(std::string &str);
+std::vector<std::string>    splitString2(std::string str, const std::string delimiter);
+std::string                 getToken(std::string line, int &i);
+std::string                 replacer(std::string str, std::string s1, std::string s2);
 #endif

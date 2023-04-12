@@ -1,4 +1,5 @@
 #include "server.hpp"
+#include "commands.hpp"
 
 Server::Server(const char *pt, const char *password)
 {
@@ -125,27 +126,6 @@ Server::~Server()
     close(this->fd_server);
 }
 
-/*
-            GRAMMER
-<command> ::= <message> | <join-command> | <part-command> | <quit-command> | <nick-command>
-
-<message> ::= PRIVMSG <recipient> <text> //
-<recipient> ::= <channel> | <user>
-
-<join-command> ::= JOIN <channel>
-<channel> ::= "#" <channel-name>
-<channel-name> ::= <letter> { <letter> | <digit> | "-" }
-
-<part-command> ::= PART <channel>
-
-<quit-command> ::= QUIT [ <message> ]
-
-<nick-command> ::= NICK <nickname>
-<nickname> ::= <letter> { <letter> | <digit> | "-" | "_" }
-
-<text> ::= <any printable character except CR or LF> { <any printable character except CR or LF> }
-
-*/
 
 void Server::chat()
 {
@@ -161,31 +141,33 @@ void Server::chat()
                 std::string cmd = msg;
                 std::cout << "*****> " << cmd << std::endl;
                 // check if the command is valid
-                if (cmd.substr(0, 4) == "NICK" || cmd.substr(0, 4) == "nick")
-                {
-                    this->cl.find(this->allFd[i].fd)->second.setNick(cmd.substr(5, cmd.length() - 6));
-                    std::string s = ":" + this->cl.find(this->allFd[i].fd)->second.getNick() + "!" + this->cl.find(this->allFd[i].fd)->second.getNick() + "@" + this->cl.find(this->allFd[i].fd)->second.getNick() + " NICK :" + this->cl.find(this->allFd[i].fd)->second.getNick() + "\n";
-                    send(this->allFd[i].fd, s.c_str(), s.length(), 0);
-                }
-                if (cmd.substr(0, 4) == "QUIT" || cmd.substr(0, 4) == "quit")
-                {
-                    std::string s = "bye bye\n";
-                    if (this->cl.find(this->allFd[i].fd)->second.getRegistred() == true)
-                        std::cout << this->cl.find(this->allFd[i].fd)->second.getNick() << " leave\n";
-                    send(this->allFd[i].fd, s.c_str(), s.length(), 0);
-                    close(this->allFd[i].fd);
-                    this->allFd.erase(this->allFd.begin() + i);
-                    this->cl.erase(this->allFd[i].fd);
-                    break;
-                }
+                // Commands(cmd, this->cl.find(this->allFd[i].fd)->second);
+                // if (cmd.substr(0, 4) == "NICK" || cmd.substr(0, 4) == "nick")
+                // {
+                //     this->cl.find(this->allFd[i].fd)->second.setNick(cmd.substr(5, cmd.length() - 6));
+                //     std::string s = ":" + this->cl.find(this->allFd[i].fd)->second.getNick() + "!" + this->cl.find(this->allFd[i].fd)->second.getNick() + "@" + this->cl.find(this->allFd[i].fd)->second.getNick() + " NICK :" + this->cl.find(this->allFd[i].fd)->second.getNick() + "\n";
+                //     send(this->allFd[i].fd, s.c_str(), s.length(), 0);
+                // }
+                // if (cmd.substr(0, 4) == "QUIT" || cmd.substr(0, 4) == "quit")
+                // {
+                //     std::string s = "bye bye\n";
+                //     if (this->cl.find(this->allFd[i].fd)->second.getRegistred() == true)
+                //         std::cout << this->cl.find(this->allFd[i].fd)->second.getNick() << " leave\n";
+                //     send(this->allFd[i].fd, s.c_str(), s.length(), 0);
+                //     close(this->allFd[i].fd);
+                //     this->allFd.erase(this->allFd.begin() + i);
+                //     this->cl.erase(this->allFd[i].fd);
+                //     break;
+                // }
             }
             else
             {
                 recv(this->allFd[i].fd, msg, 1024, 0);
                 std::string msgg = msg;
                 std::cout << msgg << std::endl;
-                if (msgg.substr(0, 4) == "NICK" || msgg.substr(0, 4) == "nick")
-                    this->cl.find(this->allFd[i].fd)->second.setNick(msgg.substr(5, msgg.length() - 6));
+                // Commands(msgg, this->cl.find(this->allFd[i].fd)->second);
+                // if (msgg.substr(0, 4) == "NICK" || msgg.substr(0, 4) == "nick")
+                //     this->cl.find(this->allFd[i].fd)->second.setNick(msgg.substr(5, msgg.length() - 6));
                 if (msgg.substr(0, 4) == "USER" || msgg.substr(0, 4) == "user")
                 {
                     this->cl.find(this->allFd[i].fd)->second.setUser(msgg.substr(5, msgg.length() - 6));
