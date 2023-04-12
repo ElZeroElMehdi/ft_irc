@@ -15,6 +15,17 @@ void Clinets::setUser(std::string user)
 {
     this->user = user;
 }
+
+void Clinets::setSecendUser(std::string user)
+{
+    this->SecendUser = user;
+}
+
+std::string Clinets::getSecendUser() const
+{
+    return this->SecendUser;
+}
+
 void Clinets::setFd(int fd)
 {
     this->client_fd = fd;
@@ -69,6 +80,7 @@ bool Clinets::checkIfRegistred()
     if (!this->nick.empty() && !this->user.empty())
     {
         this->isRegistred = true;
+        std::cout << "client registred\n";
         return true;
     }
     else

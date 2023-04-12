@@ -7,6 +7,7 @@ class Clinets
     private:
         int client_fd;
         std::string user; //9 of char
+        std::string SecendUser; //9 of char
         std::string nick;//9 of char
         bool isRegistred;
         // std::vector<Channels> chanel;
@@ -15,6 +16,8 @@ class Clinets
         Clinets(std::string user, std::string nick, int fd);
         void setNick(std::string nick);
         void setUser(std::string user);
+        void setSecendUser(std::string user);
+        std::string getSecendUser() const;
         void setFd(int fd);
         void setRegistred(bool _isRegistred);
         bool getRegistred() const;

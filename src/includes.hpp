@@ -25,5 +25,6 @@ struct cmd
 // #include "channels.hpp"
 // #include "client.hpp"
 // #include "server.hpp"
+#include "replies.hpp"
 
 #endif

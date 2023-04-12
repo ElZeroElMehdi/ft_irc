@@ -20,6 +20,7 @@ class Server
         Server(int pt, std::string password);
         // seters
         void setPort(int pr);
+        int getPort() const;
         // methods
         void createSocket();
         void bindSocket();
@@ -29,6 +30,7 @@ class Server
         void creatServer();
         void chat();
         int findClinet(std::string nickName);
+        std::string showReply(int code, int fd);
         ~Server(); 
 };
 
