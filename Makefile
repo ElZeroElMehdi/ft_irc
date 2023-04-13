@@ -14,7 +14,7 @@ SRCS =  ./src/channels.cpp\
 		./src/commands.cpp\
 		./src/utills.cpp
 
-headers = c./src/includes.hpp
+headers = ./src/*.hpp
 
 OBJS = $(SRCS:.cpp=.o)
 

@@ -15,11 +15,13 @@
 #include <map>
 #include <string.h>
 
-// #include "channels.hpp"
-// #include "client.hpp"
-// #include "server.hpp"
+#include "server.hpp"
 #include "replies.hpp"
 
+#include "client.hpp"
+#include "channels.hpp"
+#include "utiles.hpp"
+#include "commands.hpp"
 
 // utills
 std::string                 str_toupper(std::string &str);

@@ -13,7 +13,7 @@ void Channels::addUser(int fd)
 
 void Channels::removeUser(int fd)
 {
-    for (int i = 0; i < this->users.size(); i++)
+    for (size_t i = 0; i < this->users.size(); i++)
     {
         if (this->users[i] == fd)
         {

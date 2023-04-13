@@ -102,7 +102,7 @@ IRCReply    replay_list( int code )
     rep.push_back((IRCReply){412, "ERR_NOTEXTTOSEND", ":No text to send", "412 - 414 are returned by PRIVMSG to indicate that the message wasn't delivered for some reason."});
     rep.push_back((IRCReply){413, "ERR_NOTTOPLEVEL", "<mask> :No toplevel domain specified", "412 - 414 are returned by PRIVMSG to indicate that the message wasn't delivered for some reason. ERR_NOTOPLEVEL and ERR_WILDTOPLEVEL are errors that are returned when an invalid use of \"PRIVMSG $<server>\" or \"PRIVMSG #<host>\" is attempted."});
     rep.push_back((IRCReply){414, "ERR_WILDTOPLEVEL", "<mask> :Wildcard in toplevel domain", "412 - 414 are returned by PRIVMSG to indicate that the message wasn't delivered for some reason. ERR_NOTOPLEVEL and ERR_WILDTOPLEVEL are errors that are returned when an invalid use of \"PRIVMSG $<server>\" or \"PRIVMSG #<host>\" is attempted."});
-    rep.push_back((IRCReply){421, "ERR_UNKNOWNCOMMAND", "<command> :Unknown command", "Returned to a registered client to indicate that the command sent is unknown by the server."});
+    rep.push_back((IRCReply){421, "ERR_UNKNOWNCOMMAND", "$1 :Unknown command", "Returned to a registered client to indicate that the command sent is unknown by the server."});
     rep.push_back((IRCReply){422, "ERR_NOMOTD", ":MOTD File is missing", "Server's MOTD file could not be opened by the server."});
     rep.push_back((IRCReply){423, "ERR_NOADMININFO", "<server> :No administrative info available", "Returned by a server in response to an ADMIN message when there is an error in finding the appropriate information."});
     rep.push_back((IRCReply){424, "ERR_FILEERROR", ":File error doing <file op> on <file>", "Generic error message used to report a failed file operation during the processing of a message."});
@@ -117,7 +117,7 @@ IRCReply    replay_list( int code )
     rep.push_back((IRCReply){445, "ERR_SUMMONDISABLED", ":SUMMON has been disabled", "Returned as a response to the SUMMON command. Must be returned by any server which does not implement it."});
     rep.push_back((IRCReply){446, "ERR_USERSDISABLED", ":USERS has been disabled", "Returned as a response to the USERS command. Must be returned by any server which does not implement it."});
     rep.push_back((IRCReply){451, "ERR_NOTREGISTERED", ":You have not registered", "Returned by the server to indicate that the client must be registered before the server will allow it to be parsed in detail."});
-    rep.push_back((IRCReply){461, "ERR_NEEDMOREPARAMS", "<command> :Not enough parameters", "Returned by the server by numerous commands to indicate to the client that it didn't supply enough parameters."});
+    rep.push_back((IRCReply){461, "ERR_NEEDMOREPARAMS", "$1 :Not enough parameters", "Returned by the server by numerous commands to indicate to the client that it didn't supply enough parameters."});
     rep.push_back((IRCReply){462, "ERR_ALREADYREGISTRED", ":You may not reregister", "Returned by the server to any link which tries to change part of the registered details (such as password or user details from second USER message)."});
     rep.push_back((IRCReply){463, "ERR_NOPERMFORHOST", ":Your host isn't among the privileged", "Returned to a client which attempts to register with a server which does not been setup to allow connections from the host the attempted connection is tried."});
     rep.push_back((IRCReply){464, "ERR_PASSWDMISMATCH", ":Password incorrect", "Returned to indicate a failed attempt at registering a connection for which a password was required and was either not given or incorrect."});
@@ -156,7 +156,7 @@ IRCReply    replay_list( int code )
             return *obj;
     }
 
-    return ((IRCReply){-1, "", ""});
+    return ((IRCReply){-1, "", "", ""});
 }
 
 void    replace(std::string &line, std::string &needle, std::string &str)

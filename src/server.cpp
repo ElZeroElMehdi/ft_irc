@@ -89,8 +89,8 @@ bool Server::events()
         }
 
         this->addFd(newClient);
-        // std::string s = ":localhost NOTICE AUTH :*** Looking up your hostname...\n:localhost NOTICE AUTH :*** Found your hostname\n";
-        // send(newClient, s.c_str(), s.length(), 0);//send a msg to the client as reply to the connection request
+        std::string s = ":localhost NOTICE AUTH :*** Looking up your hostname...\n:localhost NOTICE AUTH :*** Found your hostname\n";
+        send(newClient, s.c_str(), s.length(), 0); // send a msg to the client as reply to the connection request
     }
     return true;
 }
@@ -132,54 +132,27 @@ void Server::chat()
         {
             char msg[1024];
             memset(msg, 0, 1024);
-            if (this->cl.find(this->allFd[i].fd)->second.getRegistred() == true)
+            recv(this->allFd[i].fd, msg, 1024, 0);
+            std::string cmd = msg;
+
+            Commands newCmds(cmd);
+            std::vector<s_command> tmp = newCmds.getList();
+            if (this->cl.find(this->allFd[i].fd)->second.getRegistred() == false)
             {
-                recv(this->allFd[i].fd, msg, 1024, 0);
-                std::string cmd = msg;
-                std::cout << "*****> " << cmd << std::endl;
-                // Commands(cmd, this->cl.find(this->allFd[i].fd)->second);
-                if (cmd.substr(0, 4) == "NICK" || cmd.substr(0, 4) == "nick")
-                {
-                    this->cl.find(this->allFd[i].fd)->second.setNick(cmd.substr(5, cmd.length() - 6));
-                    std::string s = ":" + this->cl.find(this->allFd[i].fd)->second.getNick() + "!" + this->cl.find(this->allFd[i].fd)->second.getNick() + "@" + this->cl.find(this->allFd[i].fd)->second.getNick() + " NICK :" + this->cl.find(this->allFd[i].fd)->second.getNick() + "\n";
-                    send(this->allFd[i].fd, s.c_str(), s.length(), 0);
-                }
-                if (cmd.substr(0, 4) == "QUIT" || cmd.substr(0, 4) == "quit")
-                {
-                    std::string s = "bye bye\n";
-                    if (this->cl.find(this->allFd[i].fd)->second.getRegistred() == true)
-                        std::cout << this->cl.find(this->allFd[i].fd)->second.getNick() << " leave\n";
-                    send(this->allFd[i].fd, s.c_str(), s.length(), 0);
-                    close(this->allFd[i].fd);
-                    this->allFd.erase(this->allFd.begin() + i);
-                    this->cl.erase(this->allFd[i].fd);
-                    break;
-                }
+                // just nick and user
             }
             else
             {
-                recv(this->allFd[i].fd, msg, 1024, 0);
-                std::string msgg = msg;
-                std::cout << msgg << std::endl;
-                Commands(msgg,this->allFd[i].fd,  this->cl);
-                // if (msgg.substr(0, 4) == "NICK" || msgg.substr(0, 4) == "nick")
-                //     this->cl.find(this->allFd[i].fd)->second.setNick(msgg.substr(5, msgg.length() - 6));
-                // if (msgg.substr(0, 4) == "USER" || msgg.substr(0, 4) == "user")
-                // {
-                //     this->cl.find(this->allFd[i].fd)->second.setUser(msgg.substr(5, msgg.length() - 6));
-                //     this->cl.find(this->allFd[i].fd)->second.setSecendUser(msgg.substr(5, msgg.length() - 6));
-                //     std::cout << "*****> " << msgg.substr(5, msgg.length() - 6) << std::endl;
-                // }
-                // if (this->cl.find(this->allFd[i].fd)->second.checkIfRegistred())
-                // {
-                //     for (size_t j = 0; j < 5; j++)
-                //     {
-                //         std::string s = this->showReply(j + 1, this->allFd[i].fd);
-                //         send(this->allFd[i].fd, s.c_str(), s.length(), 0);
-                //     }
-                //     std::string lastWelcomeReply = ":" + this->cl.find(this->allFd[i].fd)->second.getNick() + " MODE " + this->cl.find(this->allFd[i].fd)->second.getNick() + " :+iH\n";
-                //     send(this->allFd[i].fd, lastWelcomeReply.c_str(), lastWelcomeReply.length(), 0);
-                // }
+                for (std::vector<s_command>::iterator it = tmp.begin(); it != tmp.end(); ++it)
+                {
+                    if (command_routes(this->allFd[i].fd, *it) == -1)
+                    {
+                        std::vector<std::string> str;
+                        str.push_back(it->command);
+                        std::string msg = this->showReply(421, this->allFd[i].fd, str);
+                        send(this->allFd[i].fd, msg.c_str(), msg.length(), 0);
+                    }
+                }
             }
         }
         if (this->cl.find(this->allFd[i].fd)->second.getRegistred() == false && this->allFd.at(i).revents & POLLHUP)
@@ -200,7 +173,19 @@ void Server::chat()
     }
 }
 
-std::string Server::showReply(int code, int fd)
+int Server::command_routes(int fd, s_command &c)
+{
+    IRCCommand info = command_info(c.command);
+    // bool registred = this->cl.find(fd)->second.checkIfRegistred();
+
+    if (info.name == "NICK")
+        return this->irc_nick(fd, c);
+    if (info.name == "USER")
+        return this->irc_user(fd, c);
+    return (-1);
+}
+
+std::string Server::showReply(int code, int fd, std::vector<std::string> &vars)
 {
     char ipv[INET_ADDRSTRLEN];
     std::string ip = inet_ntop(AF_INET, &this->ConAddr.sin_addr, ipv, sizeof(ipv));
@@ -246,6 +231,46 @@ std::string Server::showReply(int code, int fd)
         s = get_replay(code, str).msg;
         str.clear();
     }
+    else if (code == 5)
+    {
+        str.push_back(ip);
+        s = get_replay(code, str).msg;
+        str.clear();
+    }
+    else
+    {
+        s = get_replay(code, vars).msg;
+        s = ":" + ip + " " + Nick + " " + ft_itoa(code) + " " + s + "\n";
+        return s;
+    }
     s = ":" + ip + " " + ft_itoa(code) + " " + Nick + " " + s + "\n";
     return s;
+}
+
+int Server::irc_user(int fd, s_command &c)
+{
+    this->cl.find(fd)->second.setUser(c.target[0]);
+    int pos = c.second_pram.find(":");
+    if (pos == -1)
+    {
+        std::vector<std::string> tmp;
+        std::string error = this->showReply(461, fd, tmp);
+        send(fd, error.c_str(), error.length(), 0);
+        return (0);
+    }
+    this->cl.find(fd)->second.setSecendUser(c.second_pram.substr(pos, c.second_pram.length() - pos));
+    return (1);
+}
+
+int Server::irc_nick(int fd, s_command &c)
+{
+    if (!c.target[0].empty())
+        this->cl.find(fd)->second.setNick(c.target[0]);
+    else
+    {
+        std::string error = showReply(431, fd, c.target);
+        send(fd, error.c_str(), error.length(), 0);
+        return (0);
+    }
+    return (1);
 }

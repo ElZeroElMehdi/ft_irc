@@ -2,9 +2,10 @@
 #define SERVER_HPP
 
 #include "includes.hpp"
-#include "client.hpp"
-#include "channels.hpp"
-#include "utiles.hpp"
+
+struct s_command;
+class Clinets;
+
 class Server
 {
     private:
@@ -14,7 +15,7 @@ class Server
         struct sockaddr_in ConAddr;
         std::vector<pollfd> allFd;
         std::map<int, Clinets> cl;
-        std::vector<Channels> cha;
+        // std::vector<Channels> cha;
 
     public:
         Server(const char *pt, const char *password);
@@ -30,7 +31,16 @@ class Server
         void creatServer();
         void chat();
         int findClinet(std::string nickName);
-        std::string showReply(int code, int fd);
+        std::string showReply(int code, int fd, std::vector<std::string> &vars);
+
+
+
+        //validations
+        int command_routes(int fd, s_command &c);
+        //commands
+        int irc_nick(int fd, s_command &c);
+        int irc_user(int fd, s_command &c);
+        int irc_join(int fd, s_command &c);
         ~Server(); 
 };
 

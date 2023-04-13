@@ -22,41 +22,35 @@ void    parsParms(s_command &c, std::string params)
     }
 }
 
-bool irc_nick(s_command &c)
-{
-    std::string nick = "";
-    for(std::vector<std::string>::iterator target = c.target.begin(); target != c.target.end(); target++)
-    {
-        nick = *target;
-        break;
-    }
-    if (nick == "")
-        return (std::cout << "localhost 431 :No nickname given" << std::endl, 0); // send err : 431
-    std::cout <<  "'" << nick <<  "'" <<  std::endl;
-    return 1;
-}
+// bool irc_nick(s_command &c)
+// {
+//     std::string nick = "";
+//     for(std::vector<std::string>::iterator target = c.target.begin(); target != c.target.end(); target++)
+//     {
+//         nick = *target;
+//         break;
+//     }
+//     if (nick == "")
+//         return (std::cout << "localhost 431 :No nickname given" << std::endl, 0); // send err : 431
+//     std::cout <<  "'" << nick <<  "'" <<  std::endl;
+//     return 1;
+// }
 
-bool command_routes(s_command &c)
-{
-    IRCCommand info = command_info(c.command);
-    
-    if (info.name == "NICK")
-        return (irc_nick(c));
-    return 1;
-}
+
 
 std::vector<IRCCommand> commands_list()
 {
     static std::vector<IRCCommand> rep;
 
-    rep.push_back((IRCCommand){"NICK"});
-    rep.push_back((IRCCommand){"USER"});
-    rep.push_back((IRCCommand){"JOIN"});
-    rep.push_back((IRCCommand){"PART"});
-    rep.push_back((IRCCommand){"PRIVMSG"});
-    rep.push_back((IRCCommand){"NOTICE"});
-    rep.push_back((IRCCommand){"WHOIS"});
-    rep.push_back((IRCCommand){"NAMES"});
+    rep.push_back((IRCCommand){"NICK", 0});
+    rep.push_back((IRCCommand){"USER", 0});
+    // need to be registred
+    rep.push_back((IRCCommand){"JOIN", 1});
+    rep.push_back((IRCCommand){"PART", 1});
+    rep.push_back((IRCCommand){"PRIVMSG", 1});
+    rep.push_back((IRCCommand){"NOTICE", 1});
+    rep.push_back((IRCCommand){"WHOIS", 1});
+    rep.push_back((IRCCommand){"NAMES", 1});
     return rep;
 }
 
@@ -83,12 +77,12 @@ IRCCommand  command_info(std::string cmd)
         if ((*obj).name == str_toupper(cmd))
             return (*obj);
     }
-    return ((IRCCommand){""});
+    return ((IRCCommand){"", 0});
 }
 
-bool validator(s_command &c)
-{
-    if (!commands_check(c.command))
-        return 0;
-    return command_routes(c);
-}
+// bool validator(s_command &c)
+// {
+//     if (!commands_check(c.command))
+//         return 0;
+//     return command_routes(c);
+// }

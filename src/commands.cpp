@@ -1,8 +1,7 @@
 #include "commands.hpp"
 
-Commands::Commands(std::string _cmd, int who, std::map<int, Clinets> &clients)
+Commands::Commands(std::string _cmd)
 {
-    (void)who;
     int i;
     _cmd = replacer(_cmd, "\r\n", "\n");
     std::vector<std::string> splitedCommands = splitString2(_cmd, "\n");
@@ -23,8 +22,7 @@ Commands::Commands(std::string _cmd, int who, std::map<int, Clinets> &clients)
         }
         if (i != -1)
             parsParms(c, (*it).substr(i));
-        if (validator(c))
-            this->list.push_back(c);
+        this->list.push_back(c);
     }
 
     for(std::vector<s_command>::iterator cmmd = this->list.begin(); cmmd != this->list.end(); cmmd++)
@@ -38,4 +36,9 @@ Commands::Commands(std::string _cmd, int who, std::map<int, Clinets> &clients)
         std::cout << "Pr2 : '" << cmmd->second_pram << "'" << std::endl;
         std::cout << "__________________________" << std::endl;
     }
+}
+
+const std::vector<s_command> &Commands::getList()const
+{
+    return (this->list);
 }

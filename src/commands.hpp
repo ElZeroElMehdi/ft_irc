@@ -1,8 +1,8 @@
-#ifndef COMMAND_HPP
-#define COMMAND_HPP
+#ifndef COMMANDS_HPP
+#define COMMANDS_HPP
 
 #include "includes.hpp"
-#include "server.hpp"
+
 
 struct s_command;
 
@@ -11,7 +11,8 @@ class Commands
     private:
         std::vector<s_command> list;
     public:
-        Commands(std::string _cmd, int who, std::map<int, Clinets> &clients);
+        Commands(std::string _cmd);
+        const std::vector<s_command> &getList()const;
 };
 
 struct s_command
@@ -26,6 +27,7 @@ struct s_command
 
 struct IRCCommand {
     std::string name;
+    bool        need_registred;
 };
 
 std::vector<IRCCommand> commands_list();
