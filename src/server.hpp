@@ -38,7 +38,10 @@ class Server
         //validations
         int command_routes(int fd, s_command &c);
         //commands
-        int irc_nick(int fd, s_command &c);
+
+        int     irc_nick(int fd, s_command &c);
+        bool    isValidNickname(int fd, const std::string &nickname);
+
         int irc_user(int fd, s_command &c);
         int irc_join(int fd, s_command &c);
         ~Server(); 

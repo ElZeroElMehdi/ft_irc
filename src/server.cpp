@@ -128,6 +128,7 @@ void Server::chat()
 {
     for (size_t i = 0; i < this->allFd.size(); i++)
     {
+        Clinets &user = this->cl.find(this->allFd[i].fd)->second;
         if (this->allFd.at(i).revents & POLLIN && (this->allFd.at(i).fd != this->fd_server))
         {
             char msg[1024];
@@ -137,25 +138,18 @@ void Server::chat()
 
             Commands newCmds(cmd);
             std::vector<s_command> tmp = newCmds.getList();
-            if (this->cl.find(this->allFd[i].fd)->second.getRegistred() == false)
+            for (std::vector<s_command>::iterator it = tmp.begin(); it != tmp.end(); ++it)
             {
-                // just nick and user
-            }
-            else
-            {
-                for (std::vector<s_command>::iterator it = tmp.begin(); it != tmp.end(); ++it)
+                if (command_routes(this->allFd[i].fd, *it) == -1 && user.getRegistred())
                 {
-                    if (command_routes(this->allFd[i].fd, *it) == -1)
-                    {
-                        std::vector<std::string> str;
-                        str.push_back(it->command);
-                        std::string msg = this->showReply(421, this->allFd[i].fd, str);
-                        send(this->allFd[i].fd, msg.c_str(), msg.length(), 0);
-                    }
+                    std::vector<std::string> str;
+                    str.push_back(it->command);
+                    std::string msg = this->showReply(421, this->allFd[i].fd, str);
+                    send(this->allFd[i].fd, msg.c_str(), msg.length(), 0);
                 }
             }
         }
-        if (this->cl.find(this->allFd[i].fd)->second.getRegistred() == false && this->allFd.at(i).revents & POLLHUP)
+        if (user.getRegistred() == false && this->allFd.at(i).revents & POLLHUP)
         {
             std::cout << "Client" << this->allFd[i].fd << " disconnected*" << std::endl;
             close(this->allFd[i].fd);
@@ -164,7 +158,7 @@ void Server::chat()
         }
         else if (this->allFd.at(i).revents & POLLHUP)
         {
-            std::cout << this->cl.find(this->allFd[i].fd)->second.getNick();
+            std::cout << user.getNick();
             std::cout << " disconnected" << std::endl;
             close(this->allFd[i].fd);
             this->allFd.erase(this->allFd.begin() + i);
@@ -176,12 +170,17 @@ void Server::chat()
 int Server::command_routes(int fd, s_command &c)
 {
     IRCCommand info = command_info(c.command);
-    // bool registred = this->cl.find(fd)->second.checkIfRegistred();
+    bool registred = this->cl.find(fd)->second.getRegistred();
 
     if (info.name == "NICK")
         return this->irc_nick(fd, c);
     if (info.name == "USER")
         return this->irc_user(fd, c);
+    if (registred == true)
+    {
+        if (info.name == "JOIN")
+            return this->irc_user(fd, c);
+    }
     return (-1);
 }
 
@@ -238,39 +237,7 @@ std::string Server::showReply(int code, int fd, std::vector<std::string> &vars)
         str.clear();
     }
     else
-    {
         s = get_replay(code, vars).msg;
-        s = ":" + ip + " " + Nick + " " + ft_itoa(code) + " " + s + "\n";
-        return s;
-    }
     s = ":" + ip + " " + ft_itoa(code) + " " + Nick + " " + s + "\n";
     return s;
-}
-
-int Server::irc_user(int fd, s_command &c)
-{
-    this->cl.find(fd)->second.setUser(c.target[0]);
-    int pos = c.second_pram.find(":");
-    if (pos == -1)
-    {
-        std::vector<std::string> tmp;
-        std::string error = this->showReply(461, fd, tmp);
-        send(fd, error.c_str(), error.length(), 0);
-        return (0);
-    }
-    this->cl.find(fd)->second.setSecendUser(c.second_pram.substr(pos, c.second_pram.length() - pos));
-    return (1);
-}
-
-int Server::irc_nick(int fd, s_command &c)
-{
-    if (!c.target[0].empty())
-        this->cl.find(fd)->second.setNick(c.target[0]);
-    else
-    {
-        std::string error = showReply(431, fd, c.target);
-        send(fd, error.c_str(), error.length(), 0);
-        return (0);
-    }
-    return (1);
 }
