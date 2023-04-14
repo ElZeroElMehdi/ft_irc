@@ -67,7 +67,7 @@ void Server::addFd(int fd, struct sockaddr_in Cl)
     newFd.events = POLLIN;
     this->allFd.push_back(newFd);
 
-    Clinets newClient(fd);
+    Clients newClient(fd);
     this->cl.insert(std::make_pair(fd, newClient));
     if (fd != this->fd_server)
         this->cl.find(fd)->second.setIp(inet_ntoa(Cl.sin_addr));
@@ -114,12 +114,19 @@ void Server::creatServer()
 
 int Server::findClinet(std::string nickName)
 {
-    for (std::map<int, Clinets>::iterator it = this->cl.begin(); it != this->cl.end(); it++)
+    for (std::map<int, Clients>::iterator it = this->cl.begin(); it != this->cl.end(); it++)
     {
         if (it->second.getNick() == nickName)
             return it->first;
     }
     return -1;
+}
+
+bool Server::isUserEx(int fd)
+{
+    if (this->cl.find(fd) != this->cl.end())
+        return true;
+    return false;
 }
 
 Server::~Server()
@@ -131,7 +138,7 @@ void Server::chat()//other name like runServer
 {
     for (size_t i = 0; i < this->allFd.size(); i++)
     {
-        Clinets &user = this->cl.find(this->allFd[i].fd)->second;
+        Clients &user = this->cl.find(this->allFd[i].fd)->second;
         if (this->allFd.at(i).revents & POLLIN && (this->allFd.at(i).fd != this->fd_server))
         {
             char msg[1024];
@@ -183,12 +190,12 @@ int Server::command_routes(int fd, s_command &c)
         return this->irc_pass(fd, c);
     if (registred == true)
     {
-        if (info.name == "JOIN")
-            return this->irc_user(fd, c);
         if (info.name == "WHOIS")
             return this->irc_whois(fd, c);
         if (info.name == "PRIVMSG")
             return this->irc_privmsg(fd, c);
+        if (info.name == "JOIN")
+            return this->irc_join(fd, c);
     }
     else if (registred == false)
     {

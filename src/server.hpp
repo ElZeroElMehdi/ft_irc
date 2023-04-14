@@ -4,7 +4,8 @@
 #include "includes.hpp"
 
 struct s_command;
-class Clinets;
+class Clients;
+class Channels;
 
 class Server
 {
@@ -14,8 +15,8 @@ class Server
         std::string pw;
         struct sockaddr_in ConAddr;
         std::vector<pollfd> allFd;
-        std::map<int, Clinets> cl;
-        // std::vector<Channels> cha;
+        std::map<int, Clients> cl;
+        std::vector<Channels> ch;
 
     public:
         Server(const char *pt, const char *password);
@@ -31,6 +32,7 @@ class Server
         bool events();
         void creatServer();
         void chat();
+        bool isUserEx(int fd);
         int findClinet(std::string nickName);
         std::string showReply(int code, int fd, std::vector<std::string> &vars);
         std::string getIp(int fd);
@@ -42,6 +44,7 @@ class Server
 
         int     irc_nick(int fd, s_command &c);
         bool    isValidNickname(int fd, const std::string &nickname);
+        bool    find_channel(std::string &name, int fd, s_command c);
 
         int irc_user(int fd, s_command &c);
         int irc_join(int fd, s_command &c);
@@ -51,8 +54,8 @@ class Server
         // bool irc_pong(int fd, s_command &c);
         bool irc_privmsg(int fd, s_command &c);
         // bool irc_part(int fd, s_command &c);
-        bool irc_quit(int fd, s_command &c);
+        // bool irc_quit(int fd, s_command &c);
+
         ~Server(); 
 };
-
 #endif

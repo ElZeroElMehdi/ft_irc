@@ -10,23 +10,11 @@ Clients::Clients(int fd) : client_fd(fd)
 void Clients::setNick(std::string nick)
 {
     this->nick = nick;
-    std::cout << "limChat fuck u"<< std::endl;
 }
 void Clients::setUser(std::string user)
 {
     this->user = user;
 }
-
-void Clients::setSecendUser(std::string user)
-{
-    this->SecendUser = user;
-}
-
-std::string Clients::getSecendUser() const
-{
-    return this->SecendUser;
-}
-
 void Clients::setFd(int fd)
 {
     this->client_fd = fd;
@@ -72,16 +60,13 @@ std::string Clients::getUser() const{
 
 Clients::~Clients()
 {
-    // chanel.clear();
-    // close(this->client_fd);
 }
 
 bool Clients::checkIfRegistred()
 {
-    if (!this->nick.empty() && !this->user.empty() && !this->pass.empty())//add password
+    if (!this->nick.empty() && !this->user.empty())
     {
         this->isRegistred = true;
-        std::cout << "client registred\n";
         return true;
     }
     else
@@ -89,19 +74,4 @@ bool Clients::checkIfRegistred()
         this->isRegistred = false;
         return false;
     }
-}
-
-void Clients::setIp(std::string ip)
-{
-    this->ip = ip;
-}
-
-std::string Clients::getIp() const
-{
-    return this->ip;
-}
-
-void Clients::setPass(std::string pass)
-{
-    this->pass = pass;
 }

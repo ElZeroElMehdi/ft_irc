@@ -78,15 +78,20 @@ class Channels
         void removeModerator(Clients& moderator);
         void removeInvited(Clients& invited);
 
+
+
+
+        //cmd
+        void joinChannel(Clients &user);
 };
 
 // comand in channel join #channel, part #channel, topic #channel, mode #channel, kick #channel, invite #channel, privmsg #channel
 // void joinChannel(t_cmd cmd, Clients &user, std::map<std::string, Channels> &channels);
-// void partChannel(t_cmd cmd, Clients &user, std::map<std::string, Channels> &channels);
-// void topicChannel(t_cmd cmd, Clients &user, std::map<std::string, Channels> &channels);
+void partChannel(t_cmd cmd, Clients &user, std::map<std::string, Channels> &channels);
+void topicChannel(t_cmd cmd, Clients &user, std::map<std::string, Channels> &channels);
 // // void modeChannel(std::string channel, std::string user, std::string mode);
-// void kickChannel(t_cmd cmd, Clients &user, Clients &kicked, std::map<std::string, Channels> &channels);
-// void inviteChannel(t_cmd cmd, Clients &user, Clients &invited, std::map<std::string, Channels> &channels);
+void kickChannel(t_cmd cmd, Clients &user, Clients &kicked, std::map<std::string, Channels> &channels);
+void inviteChannel(t_cmd cmd, Clients &user, Clients &invited, std::map<std::string, Channels> &channels);
 // void privmsgChannel(std::string channel, std::string user, std::string message);
 
 // utilise
