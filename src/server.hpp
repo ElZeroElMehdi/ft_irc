@@ -47,6 +47,9 @@ class Server
         int irc_join(int fd, s_command &c);
         bool irc_whois(int fd, s_command &c);
         bool irc_pass(int fd, s_command &c);
+        // bool irc_ping(int fd, s_command &c);
+        // bool irc_pong(int fd, s_command &c);
+        bool irc_privmsg(int fd, s_command &c);
         ~Server(); 
 };
 

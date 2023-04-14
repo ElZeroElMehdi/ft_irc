@@ -3,6 +3,12 @@
 
 int Server::irc_user(int fd, s_command &c)
 {
+    if (this->cl.find(fd)->second.getRegistred() == true)
+    {
+        std::string error = showReply(462, fd, c.target);
+        send(fd, error.c_str(), error.length(), 0);
+        return (0);
+    }
     this->cl.find(fd)->second.setUser(c.target[0]);
     int pos = c.second_pram.find(":");
     if (pos == -1)
@@ -147,7 +153,13 @@ bool Server::irc_whois(int fd, s_command &c)
 
 bool Server::irc_pass(int fd, s_command &c)
 {
-    if (c.target.size() && !c.target[0].empty())
+    if (this->cl.find(fd)->second.getRegistred() == true)
+    {
+        std::string error = showReply(462, fd, c.target);
+        send(fd, error.c_str(), error.length(), 0);
+        return (0);
+    }
+    else if (c.target.size() && !c.target[0].empty())
     {
         std::cout << "Client pass to " << c.target[0] << std::endl;
         if (this->isPass(c.target[0]) == true)
@@ -170,4 +182,16 @@ bool Server::irc_pass(int fd, s_command &c)
         return (0);
     }
     return (1);
+}
+
+bool Server::irc_privmsg(int fd, s_command &c)
+{
+    std::cout << "privmsg done!" << std::endl;
+    if (this->findClinet(this->cl.find(fd)->second.getNick()) != fd)
+    {
+        std::string error = showReply(401, fd, c.target);
+        send(fd, error.c_str(), error.length(), 0);
+        return (0);
+    }
+    return 1;
 }

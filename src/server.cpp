@@ -187,6 +187,8 @@ int Server::command_routes(int fd, s_command &c)
             return this->irc_user(fd, c);
         if (info.name == "WHOIS")
             return this->irc_whois(fd, c);
+        if (info.name == "PRIVMSG")
+            return this->irc_privmsg(fd, c);
     }
     else if (registred == false)
     {
