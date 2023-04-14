@@ -197,3 +197,8 @@ bool Server::irc_privmsg(int fd, s_command &c)
     }
     return 1;
 }
+
+bool Server::irc_quit(int fd, s_command &c)
+{
+    // std::cout << "quit done!" << std::endl;
+}
