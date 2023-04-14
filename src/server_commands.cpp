@@ -10,7 +10,9 @@ int Server::irc_user(int fd, s_command &c)
         return (0);
     }
     this->cl.find(fd)->second.setUser(c.target[0]);
-    int pos = c.second_pram.find(":");
+    int pos = c.second_pram.find(" :");
+    if(pos == -1)//std::string::npos
+        pos = c.second_pram.find(" ");
     if (pos == -1)
     {
         std::vector<std::string> tmp;
