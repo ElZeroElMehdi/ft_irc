@@ -78,7 +78,7 @@ Clinets::~Clinets()
 
 bool Clinets::checkIfRegistred()
 {
-    if (!this->nick.empty() && !this->user.empty())
+    if (!this->nick.empty() && !this->user.empty() && !this->pass.empty())//add password
     {
         this->isRegistred = true;
         std::cout << "client registred\n";
@@ -89,4 +89,19 @@ bool Clinets::checkIfRegistred()
         this->isRegistred = false;
         return false;
     }
+}
+
+void Clinets::setIp(std::string ip)
+{
+    this->ip = ip;
+}
+
+std::string Clinets::getIp() const
+{
+    return this->ip;
+}
+
+void Clinets::setPass(std::string pass)
+{
+    this->pass = pass;
 }

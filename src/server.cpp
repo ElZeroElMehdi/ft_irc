@@ -37,6 +37,7 @@ void Server::createSocket()
         throw std::runtime_error("faild to set change mode of socket!");
     }
 }
+
 void Server::bindSocket()
 {
     this->ConAddr.sin_family = AF_INET;
@@ -59,7 +60,7 @@ void Server::listenConix()
     }
 }
 
-void Server::addFd(int fd)
+void Server::addFd(int fd, struct sockaddr_in Cl)
 {
     struct pollfd newFd;
     newFd.fd = fd;
@@ -68,6 +69,8 @@ void Server::addFd(int fd)
 
     Clinets newClient(fd);
     this->cl.insert(std::make_pair(fd, newClient));
+    if (fd != this->fd_server)
+        this->cl.find(fd)->second.setIp(inet_ntoa(Cl.sin_addr));
 }
 
 bool Server::events()
@@ -80,16 +83,17 @@ bool Server::events()
     // check if a requist is comming
     if (this->allFd.at(0).revents & POLLIN)
     {
-        int len = sizeof(ConAddr);
-        int newClient = accept(this->fd_server, (struct sockaddr *)&ConAddr, (socklen_t *)&len);
+        struct sockaddr_in ClinetAddr;
+        int len = sizeof(ClinetAddr);
+        int newClient = accept(this->fd_server, (struct sockaddr *)&ClinetAddr, (socklen_t *)&len);
         if (newClient == -1)
         {
             close(this->fd_server);
             return false;
         }
 
-        this->addFd(newClient);
-        std::string s = ":localhost NOTICE AUTH :*** Looking up your hostname...\n:localhost NOTICE AUTH :*** Found your hostname\n";
+        this->addFd(newClient, ClinetAddr);
+        std::string s = ":"+this->getIp(this->fd_server)+" NOTICE AUTH :*** Looking up your hostname...\n:"+this->getIp(this->fd_server)+" NOTICE AUTH :*** Found your hostname\n";
         send(newClient, s.c_str(), s.length(), 0); // send a msg to the client as reply to the connection request
     }
     return true;
@@ -100,12 +104,11 @@ void Server::creatServer()
     this->createSocket();
     this->bindSocket();
     this->listenConix();
-    this->addFd(this->fd_server);
+    this->addFd(this->fd_server, this->ConAddr);
     while (1)
     {
         if (this->events())
             this->chat();
-        // break;
     }
 }
 
@@ -124,7 +127,7 @@ Server::~Server()
     close(this->fd_server);
 }
 
-void Server::chat()
+void Server::chat()//other name like runServer
 {
     for (size_t i = 0; i < this->allFd.size(); i++)
     {
@@ -175,19 +178,29 @@ int Server::command_routes(int fd, s_command &c)
     if (info.name == "NICK")
         return this->irc_nick(fd, c);
     if (info.name == "USER")
-        return this->irc_user(fd, c);
+        return this->irc_user(fd, c);//should I check if the user is re
+    if (info.name == "PASS")
+        return this->irc_pass(fd, c);
     if (registred == true)
     {
         if (info.name == "JOIN")
             return this->irc_user(fd, c);
+        if (info.name == "WHOIS")
+            return this->irc_whois(fd, c);
+    }
+    else if (registred == false)
+    {
+        std::vector<std::string> str;
+        str.push_back(c.command);
+        std::string msg = this->showReply(451, fd, str);
+        send(fd, msg.c_str(), msg.length(), 0);
     }
     return (-1);
 }
 
 std::string Server::showReply(int code, int fd, std::vector<std::string> &vars)
 {
-    char ipv[INET_ADDRSTRLEN];
-    std::string ip = inet_ntop(AF_INET, &this->ConAddr.sin_addr, ipv, sizeof(ipv));
+    std::string ip = this->getIp(fd);
     std::string Nick = this->cl.find(fd)->second.getNick();
     std::string User = this->cl.find(fd)->second.getUser();
 
@@ -198,7 +211,6 @@ std::string Server::showReply(int code, int fd, std::vector<std::string> &vars)
         s = Nick + "," + User + "," + ip;
         str = splitString(s, ",");
         s = get_replay(code, str).msg;
-        // s = ":" + ip + " " + s;
         str.clear();
     }
     else if (code == 2)
@@ -240,4 +252,21 @@ std::string Server::showReply(int code, int fd, std::vector<std::string> &vars)
         s = get_replay(code, vars).msg;
     s = ":" + ip + " " + ft_itoa(code) + " " + Nick + " " + s + "\n";
     return s;
+}
+
+
+std::string Server::getIp(int fd)
+{
+    if(fd == this->fd_server)
+        return "localhost";
+    else
+        return this->cl.find(fd)->second.getIp();
+}
+
+bool Server::isPass(std::string pass)
+{
+    std::cout << "pass: " << pass << std::endl;
+    if (pass == this->pw)
+        return true;
+    return false;
 }

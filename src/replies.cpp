@@ -35,8 +35,9 @@ IRCReply    replay_list( int code )
     rep.push_back((IRCReply){303, "RPL_ISON", ":[<nick> {<space><nick>}]", "Reply format used by ISON to list replies to the query list."});
     rep.push_back((IRCReply){305, "RPL_UNAWAY", ":You are no longer marked as being away", "n/a"});
     rep.push_back((IRCReply){306, "RPL_NOWAWAY", ":You have been marked as being away", "These replies are used with the AWAY command (if allowed). RPL_AWAY is sent to any client sending a PRIVMSG to a client which is away. RPL_AWAY is only sent by the server to which the client is connected. Replies RPL_UNAWAY and RPL_NOWAWAY are sent when the client removes and sets an AWAY message."});
-    rep.push_back((IRCReply){311, "RPL_WHOISUSER", "<nick> <user> <host> * :<real name>", "n/a"});
-    rep.push_back((IRCReply){312, "RPL_WHOISSERVER", "<nick> <server> :<server info>", "n/a"});
+    rep.push_back((IRCReply){311, "RPL_WHOISUSER", "$1 $2 $3 * :$4", "n/a"});
+//                                                    <nick> <server> :<server info>
+    rep.push_back((IRCReply){312, "RPL_WHOISSERVER", "$1 $2 :$3", "n/a"});
     rep.push_back((IRCReply){313, "RPL_WHOISOPERATOR", "<nick> :is an IRC operator", "n/a"});
     rep.push_back((IRCReply){314, "RPL_WHOWASUSER", "<nick> <user> <host> * :<real name>", "n/a"});
     rep.push_back((IRCReply){317, "RPL_WHOISIDLE", "<nick> <integer> :seconds idle", "n/a"});
@@ -148,7 +149,7 @@ IRCReply    replay_list( int code )
     rep.push_back((IRCReply){257, "RPL_ADMINLOC1", ":<admin info>", "n/a"});
     rep.push_back((IRCReply){258, "RPL_ADMINLOC2", ":<admin info>", "n/a"});
     rep.push_back((IRCReply){259, "RPL_ADMINEMAIL", ":<admin info>", "When replying to an ADMIN message, a server is expected to use replies RLP_ADMINME through to RPL_ADMINEMAIL and provide a text message with each. For RPL_ADMINLOC1 a description of what city, state and country the server is in is expected, followed by details of the university and department (RPL_ADMINLOC2) and finally the administrative contact for the server (an email address here is required) in RPL_ADMINEMAIL."});
-
+    //Nick omarakoudadmikwad
 
     for(std::vector<IRCReply>::iterator obj = rep.begin(); obj != rep.end(); obj++)
     {

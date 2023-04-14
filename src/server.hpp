@@ -22,17 +22,18 @@ class Server
         // seters
         void setPort(int pr);
         int getPort() const;
+        bool isPass(std::string pass);
         // methods
         void createSocket();
         void bindSocket();
         void listenConix();
-        void addFd(int fd);
+        void addFd(int fd, struct sockaddr_in Cl);
         bool events();
         void creatServer();
         void chat();
         int findClinet(std::string nickName);
         std::string showReply(int code, int fd, std::vector<std::string> &vars);
-
+        std::string getIp(int fd);
 
 
         //validations
@@ -44,6 +45,8 @@ class Server
 
         int irc_user(int fd, s_command &c);
         int irc_join(int fd, s_command &c);
+        bool irc_whois(int fd, s_command &c);
+        bool irc_pass(int fd, s_command &c);
         ~Server(); 
 };
 
