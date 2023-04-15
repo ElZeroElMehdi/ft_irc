@@ -194,8 +194,8 @@ int Server::command_routes(int fd, s_command &c)
     {
         if (info.name == "WHOIS")
             return this->irc_whois(fd, c);
-        if (info.name == "PRIVMSG")
-            return this->irc_privmsg(fd, c);
+        if (info.name == "PRIVMSG" || info.name == "NOTICE")
+            return this->irc_privmsg_notice(fd, c);
         if (info.name == "JOIN")
             return this->irc_join(fd, c);
         if (info.name == "PART")

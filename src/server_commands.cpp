@@ -178,7 +178,7 @@ bool Server::irc_pass(int fd, s_command &c)
     return (1);
 }
 
-bool Server::irc_privmsg(int fd, s_command &c)
+bool Server::irc_privmsg_notice(int fd, s_command &c)
 {
     std::vector<std::string> tmp;
     std::string error;
@@ -193,8 +193,12 @@ bool Server::irc_privmsg(int fd, s_command &c)
         for(std::vector<std::string>::iterator it = c.target.begin();it != c.target.end();++it)
         {
             int to = this->findClinet(*it);
-            std::string msg = ":"+this->cl.find(fd)->second.getNick()+"!"+this->cl.find(fd)->second.getUser()+"@"+this->getIp(fd)+" PRIVMSG "+*it+" :\n";
-            msg += c.first_pram + c.second_pram;
+            
+            std::string msg = ":"+this->cl.find(fd)->second.getNick()+"!"+this->cl.find(fd)->second.getUser()+"@"+this->getIp(fd)+" " + str_toupper(c.command) + " "+*it+" :";
+            if (!c.first_pram.empty())
+                msg += c.first_pram + "\n";
+            else
+                msg += c.second_pram + "\n";
             send(to, msg.c_str(), msg.length(), 0);
         }
         return 1;

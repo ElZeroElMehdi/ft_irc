@@ -22,20 +22,6 @@ void    parsParms(s_command &c, std::string params)
     }
 }
 
-// bool irc_nick(s_command &c)
-// {
-//     std::string nick = "";
-//     for(std::vector<std::string>::iterator target = c.target.begin(); target != c.target.end(); target++)
-//     {
-//         nick = *target;
-//         break;
-//     }
-//     if (nick == "")
-//         return (std::cout << "localhost 431 :No nickname given" << std::endl, 0); // send err : 431
-//     std::cout <<  "'" << nick <<  "'" <<  std::endl;
-//     return 1;
-// }
-
 
 
 std::vector<IRCCommand> commands_list()

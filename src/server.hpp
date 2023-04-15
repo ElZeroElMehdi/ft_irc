@@ -52,7 +52,7 @@ class Server
         bool irc_pass(int fd, s_command &c);
         // bool irc_ping(int fd, s_command &c);
         // bool irc_pong(int fd, s_command &c);
-        bool irc_privmsg(int fd, s_command &c);
+        bool irc_privmsg_notice(int fd, s_command &c);
         // bool irc_part(int fd, s_command &c);
         bool irc_quit(int fd, s_command &c);
         bool irc_part(int fd, s_command &c);
