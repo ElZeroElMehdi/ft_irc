@@ -18,6 +18,7 @@ SRCS =  ./src/channels.cpp\
 
 headers = ./src/*.hpp
 
+
 OBJS = $(SRCS:.cpp=.o)
 
 all: $(NAME)
@@ -34,5 +35,6 @@ fclean: clean
 	rm -f $(NAME)
 
 re: fclean all
+
 
 .PHONY:all clean fclean re
