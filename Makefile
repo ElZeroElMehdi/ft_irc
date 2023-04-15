@@ -8,6 +8,7 @@ SRCS =  ./src/channels.cpp\
 		./src/client.cpp\
 		./src/main.cpp\
 		./src/server.cpp\
+		./src/bot.cpp\
 		./src/utiles.cpp\
 		./src/replies.cpp\
 		./src/commands_utills.cpp\

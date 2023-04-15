@@ -190,6 +190,8 @@ int Server::command_routes(int fd, s_command &c)
         return this->irc_pass(fd, c);
     if (info.name == "QUIT")
         return this->irc_quit(fd, c);
+    if(info.name == "BOT")
+        return this->irc_bot(fd, c);
     if (registred == true)
     {
         if (info.name == "WHOIS")
@@ -242,7 +244,7 @@ std::string Server::showReply(int code, int fd, std::vector<std::string> &vars)
     }
     else if (code == 3)
     {
-        str.push_back("2023-01-01");
+        str.push_back("2023-04-01");
         s = get_replay(code, str).msg;
         str.clear();
     }
