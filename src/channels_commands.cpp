@@ -83,6 +83,7 @@ bool Server::irc_part(int fd, s_command &c)
 {
     (void)fd;
     (void)c;
+
     return (true);
 }
 
@@ -90,6 +91,7 @@ bool Server::irc_topic(int fd, s_command &c)
 {
     (void)fd;
     (void)c;
+
     return (true);
 }
 
@@ -97,6 +99,7 @@ bool Server::irc_invite(int fd, s_command &c)
 {
     (void)fd;
     (void)c;
+
     return (true);
 }
 
@@ -104,6 +107,7 @@ bool Server::irc_mode(int fd, s_command &c)
 {
     (void)fd;
     (void)c;
+
     return (true);
 }
 
@@ -111,6 +115,7 @@ bool Server::irc_kick(int fd, s_command &c)
 {
     (void)fd;
     (void)c;
+
     return (true);
 }
 
@@ -118,6 +123,7 @@ bool Server::irc_names(int fd, s_command &c)
 {
     (void)fd;
     (void)c;
+
     return (true);
 }
 
@@ -125,5 +131,6 @@ bool Server::irc_ban(int fd, s_command &c)
 {
     (void)fd;
     (void)c;
+
     return (true);
 }
