@@ -33,5 +33,5 @@ std::string                 getToken(std::string line, int &i);
 std::string                 replacer(std::string str, std::string s1, std::string s2);
 
 #define DEBUG 1
-#define DETAILS 0
+#define DETAILS 1
 #endif

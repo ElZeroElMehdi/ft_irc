@@ -5,25 +5,20 @@
 #include <string>
 #include <vector>
 
-struct cmd
-{
-    std::string                 original;
-    std::string                 command;
-    std::vector<std::string>    target;
-    std::string                 first_pram;
-    std::string                 second_pram;
-} typedef t_cmd;
-
 
 class Channels
 {
     private:
+        int limit;
+        unsigned long timestamp;
         std::string name;
         std::string topic;
         std::string mode;
         std::string key;
 
         bool topicSet;
+        bool visibleSet;
+        bool limitSet;
         bool modeSet;
         bool keySet;
         bool scretSet;
@@ -40,6 +35,8 @@ class Channels
         Channels(std::string name, std::string key);
         ~Channels();
 
+        int getLimit() const;
+        unsigned long getTimestamp() const;
         std::string getName() const;
         std::string getTopic() const;
         std::string getMode() const;
@@ -51,6 +48,8 @@ class Channels
         std::map<int, Clients> getInvited() const;
 
         bool getTopicSet() const;
+        bool getVisibleSet() const;
+        bool getLimitSet() const;
         bool getModeSet() const;
         bool getKeySet() const;
         bool getScretSet() const;
@@ -58,6 +57,7 @@ class Channels
         bool getOutsideSet() const;
 
         void setName(std::string name);
+        void setTimestamp(unsigned long timestamp);
         void setTopic(std::string topic);
         void setMode(std::string mode);
         void setKey(std::string key);
@@ -67,6 +67,8 @@ class Channels
         void setScretSet(bool scretSet);
         void setInviteSet(bool inviteSet);
         void setOutsideSet(bool outsideSet);
+        void setLimitSet(bool limitSet);
+        void setVisibleSet(bool visibleSet);
 
         void addUser(Clients &user);
         void addOp(Clients &op);

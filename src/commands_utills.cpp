@@ -40,6 +40,7 @@ std::vector<IRCCommand> commands_list()
     rep.push_back((IRCCommand){"WHOIS", 1});
     rep.push_back((IRCCommand){"NAMES", 1});
     rep.push_back((IRCCommand){"LIST", 1});
+    rep.push_back((IRCCommand){"TOPIC", 1});
     return rep;
 }
 
