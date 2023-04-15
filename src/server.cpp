@@ -285,7 +285,6 @@ std::string Server::getIp(int fd)
 
 bool Server::isPass(std::string pass)
 {
-    std::cout << "pass: " << pass << std::endl;
     if (pass == this->pw)
         return true;
     return false;

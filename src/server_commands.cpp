@@ -1,8 +1,31 @@
 #include "server.hpp"
 #include "commands.hpp"
 
+void Server::welcome(int fd, s_command &c)
+{
+    Clients &user = this->cl.find(fd)->second;
+    if (!user.getNick().empty() && !user.getUser().empty() && !user.getPass().empty() && !user.getRegistred())
+    {
+        std::string msg = showReply(1, fd, c.target);
+        send(fd, msg.c_str(), msg.length(), 0);
+        msg = showReply(2, fd, c.target);
+        send(fd, msg.c_str(), msg.length(), 0);
+        msg = showReply(3, fd, c.target);
+        send(fd, msg.c_str(), msg.length(), 0);
+        msg = showReply(4, fd, c.target);
+        send(fd, msg.c_str(), msg.length(), 0);
+    }
+}
+
 int Server::irc_user(int fd, s_command &c)
 {
+    if (c.target.size() == 0)
+    {   std::vector<std::string> tmp;
+        tmp.push_back("USER");
+        std::string error = showReply(461, fd, tmp);
+        send(fd, error.c_str(), error.length(), 0);
+        return (0);
+    }
     if (this->cl.find(fd)->second.getRegistred() == true)
     {
         std::string error = showReply(462, fd, c.target);
@@ -16,12 +39,15 @@ int Server::irc_user(int fd, s_command &c)
     if (pos == -1)
     {
         std::vector<std::string> tmp;
+        tmp.push_back("USER");
         std::string error = this->showReply(461, fd, tmp);
         send(fd, error.c_str(), error.length(), 0);
         return (0);
     }
     this->cl.find(fd)->second.setSecendUser(c.second_pram.substr(pos, c.second_pram.length() - pos));
+    welcome(fd, c);
     this->cl.find(fd)->second.checkIfRegistred();
+    
     return (1);
 }
 
@@ -87,7 +113,7 @@ int Server::irc_nick(int fd, s_command &c)
             return (0);
         }
         this->cl.find(fd)->second.setNick(c.target[0]);
-        std::cout << "Client nick to " << c.target[0] << std::endl;
+        welcome(fd, c);
         this->cl.find(fd)->second.checkIfRegistred();
     }
     else
@@ -137,7 +163,7 @@ bool Server::irc_whois(int fd, s_command &c)
             tmp.clear();
             tmp.push_back(nick);
             tmp.push_back(this->getIp(this->fd_server));
-            tmp.push_back("ircserver created by eelmoham oakouda and oalaoui- students at 1337 school");
+            tmp.push_back("ircserver created by eelmoham oakoudad and oalaoui- students at 1337 school");
             error = this->showReply(312, fd, tmp);
             send(fd, error.c_str(), error.length(), 0);
             error.clear();
@@ -159,6 +185,7 @@ bool Server::irc_pass(int fd, s_command &c)
         if (this->isPass(c.target[0]) == true)
         {
             this->cl.find(fd)->second.setPass(c.target[0]);
+            welcome(fd, c);
             this->cl.find(fd)->second.checkIfRegistred();
             return (1);
         }
@@ -192,13 +219,21 @@ bool Server::irc_privmsg_notice(int fd, s_command &c)
         }
         for(std::vector<std::string>::iterator it = c.target.begin();it != c.target.end();++it)
         {
-            int to = this->findClinet(*it);
-            
+            //check if  *it channel or user
             std::string msg = ":"+this->cl.find(fd)->second.getNick()+"!"+this->cl.find(fd)->second.getUser()+"@"+this->getIp(fd)+" " + str_toupper(c.command) + " "+*it+" :";
-            if (!c.first_pram.empty())
+            int to = this->findClinet(*it);
+            std::cout << "to :" << to << std::endl;
+            if (to == -1)
+            {
+                msg = this->showReply(401, fd, c.target) + "\n";
+                send(fd, msg.c_str(), msg.length(), 0);
+                continue;
+            }
+            else if (!c.first_pram.empty())
                 msg += c.first_pram + "\n";
             else
                 msg += c.second_pram + "\n";
+            std::cout << "msg :" << msg << std::endl;
             send(to, msg.c_str(), msg.length(), 0);
         }
         return 1;

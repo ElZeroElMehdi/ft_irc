@@ -31,4 +31,7 @@ std::string                 str_toupper(std::string &str);
 std::vector<std::string>    splitString2(std::string str, const std::string delimiter);
 std::string                 getToken(std::string line, int &i);
 std::string                 replacer(std::string str, std::string s1, std::string s2);
+
+#define DEBUG 1
+#define DETAILS 0
 #endif

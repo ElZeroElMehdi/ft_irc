@@ -25,17 +25,20 @@ Commands::Commands(std::string _cmd)
         this->list.push_back(c);
     }
 
-    for(std::vector<s_command>::iterator cmmd = this->list.begin(); cmmd != this->list.end(); cmmd++)
-    {
-        std::cout << "org : " << cmmd->original << std::endl;
-        std::cout << "cmd : " << cmmd->command << std::endl;
-        for(std::vector<std::string>::iterator iv = cmmd->target.begin(); iv != cmmd->target.end(); iv++)
-            std::cout << "Tar : " << *iv << std::endl;
-        std::cout << std::endl;
-        std::cout << "Pr1 : '" << cmmd->first_pram << "'" << std::endl;
-        std::cout << "Pr2 : '" << cmmd->second_pram << "'" << std::endl;
-        std::cout << "__________________________" << std::endl;
-    }
+    if (DEBUG)
+        for(std::vector<s_command>::iterator cmmd = this->list.begin(); cmmd != this->list.end(); cmmd++)
+        {
+            std::cout << "org : " << cmmd->original << std::endl;
+            if (DETAILS){
+                std::cout << "cmd : " << cmmd->command << std::endl;
+                for(std::vector<std::string>::iterator iv = cmmd->target.begin(); iv != cmmd->target.end(); iv++)
+                    std::cout << "Tar : " << *iv << std::endl;
+                std::cout << std::endl;
+                std::cout << "Pr1 : '" << cmmd->first_pram << "'" << std::endl;
+                std::cout << "Pr2 : '" << cmmd->second_pram << "'" << std::endl;
+                std::cout << "__________________________" << std::endl;
+            }
+        }
 }
 
 const std::vector<s_command> &Commands::getList()const

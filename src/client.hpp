@@ -26,6 +26,7 @@ class Clients
         bool getRegistred() const;
         std::string getNick() const;
         std::string getUser() const;
+        std::string getPass() const;
         int getFd() const;
         std::string getIp() const;
         void setIp(std::string ip);

@@ -15,6 +15,10 @@ void Clients::setUser(std::string user)
 {
     this->user = user;
 }
+std::string Clients::getPass() const
+{
+    return this->pass;
+}
 
 void Clients::setSecendUser(std::string user)
 {
@@ -77,7 +81,7 @@ Clients::~Clients()
 
 bool Clients::checkIfRegistred()
 {
-    if (!this->nick.empty() && !this->user.empty() && !this->pass.empty())
+    if (!this->nick.empty() && !this->user.empty() && !this->pass.empty() && !this->isRegistred)
         this->isRegistred = true;
     else
     {

@@ -65,9 +65,10 @@ class Server
 
         bool irc_list(int fd, s_command &c);
         //for new nranch
-
         
         //welcome
+        void welcome(int fd, s_command &c);
+
         ~Server(); 
 };
 #endif
