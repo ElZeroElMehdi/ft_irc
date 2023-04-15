@@ -203,3 +203,26 @@ bool Server::irc_privmsg(int fd, s_command &c)
 //     // std::cout << "quit done!" << std::endl;
 // }
 
+bool Server::irc_list(int fd, s_command &c)
+{
+    (void)c;
+    //321 RPL_LISTSTART
+    std::vector<std::string> vars;
+
+    std::string replay = showReply(321, fd, vars);
+    send(fd, replay.c_str(), replay.length(), 0);
+    vars.clear();
+    //322 RPL_LIST
+    for(std::vector<Channels>::iterator it = this->ch.begin(); it != this->ch.end(); ++it){
+        vars.push_back(it->getName());
+        vars.push_back(ft_itoa(it->getUsers().size()));
+        vars.push_back(it->getTopic());
+        replay = showReply(322, fd, vars);
+        send(fd, replay.c_str(), replay.length(), 0);
+        vars.clear();
+    }
+    //323 RPL_LISTEND
+    replay = showReply(323, fd, vars);
+    send(fd, replay.c_str(), replay.length(), 0);
+    return true;
+}

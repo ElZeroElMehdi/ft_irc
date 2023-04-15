@@ -44,6 +44,7 @@ IRCReply    replay_list( int code )
     rep.push_back((IRCReply){318, "RPL_ENDOFWHOIS", "<nick> :End of /WHOIS list", "n/a"});
     rep.push_back((IRCReply){319, "RPL_WHOISCHANNELS", "<nick> :{[@|+]<channel><space>}", "Replies 311 - 313, 317 - 319 are all replies generated in response to a WHOIS message. Given that there are enough parameters present, the answering server must either formulate a reply out of the above numerics (if the query nick is found) or return an error reply. The '*' in RPL_WHOISUSER is there as the literal character and not as a wild card. For each reply set, only RPL_WHOISCHANNELS may appear more than once (for long lists of channel names). The '@' and '+' characters next to the channel name indicate whether a client is a channel operator or has been granted permission to speak on a moderated channel. The RPL_ENDOFWHOIS reply is used to mark the end of processing a WHOIS message."});
     rep.push_back((IRCReply){321, "RPL_LISTSTART", "Channel :Users Name", "n/a"});
+    rep.push_back((IRCReply){322, "RPL_LIST", "$1 $2 :$3", "n/a"});
     rep.push_back((IRCReply){323, "RPL_LISTEND", ":End of /LIST", "Replies RPL_LISTSTART, RPL_LIST, RPL_LISTEND mark the start, actual replies with data and end of the server's response to a LIST command. If there are no channels available to return, only the start and end reply must be sent."});
     rep.push_back((IRCReply){324, "RPL_CHANNELMODEIS", "<channel> <mode> <mode params>", "n/a"});
     rep.push_back((IRCReply){331, "RPL_NOTOPIC", "<channel> :No topic is set", "n/a"});
@@ -184,7 +185,7 @@ IRCReply    get_replay( int code, std::vector<std::string> vars )
     return rep;
 }
 
-std::string ft_itoa(int num) {
+std::string ft_rep_code(int num) {
     char buf[20];
     int i = 0;
 
@@ -220,19 +221,34 @@ std::string ft_itoa(int num) {
     return str;
 }
 
-std::string prepareRep( int code, std::vector<std::string> vars )
-{
-    // :punch.wa.us.dal.net 001 fv :Welcome to the DALnet IRC Network fv!~vf@197.230.30.146
-    
-    
-    IRCReply rep = get_replay(code, vars);
+std::string ft_itoa(int num) {
+    char buf[20];
+    int i = 0;
 
-    return (std::string)":" + "<localhost> " + ft_itoa(code) + " " + "<USER> : " + rep.msg;
+    if (num == 0) {
+        buf[i++] = '0';
+        buf[i] = '\0';
+        return std::string(buf);
+    }
+
+    bool is_negative = false;
+    if (num < 0) {
+        is_negative = true;
+        num = -num;
+    }
+
+    while (num != 0) {
+        int digit = num % 10;
+        buf[i++] = digit + '0';
+        num /= 10;
+    }
+
+    if (is_negative) {
+        buf[i++] = '-';
+    }
+
+    buf[i] = '\0';
+    std::string str(buf);
+    reverse(str.begin(), str.end());
+    return str;
 }
-
-// int main()
-// {
-//     std::string vars[] = {"fv", "~fv", "192.168.1.1"};
-    
-//     std::cout << prepareRep( 5, std::vector<std::string>(vars, vars + sizeof(vars)/sizeof(vars[0])));
-// }

@@ -62,6 +62,7 @@ class Server
         bool irc_kick(int fd, s_command &c);
         bool irc_names(int fd, s_command &c);
         bool irc_ban(int fd, s_command &c);
+        bool irc_list(int fd, s_command &c);
         //for new nranch
         ~Server(); 
 };

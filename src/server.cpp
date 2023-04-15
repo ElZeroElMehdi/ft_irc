@@ -210,14 +210,16 @@ int Server::command_routes(int fd, s_command &c)
             return this->irc_names(fd, c);
         if (info.name == "BAN")
             return this->irc_ban(fd, c);
+        if (info.name == "LIST")
+            return this->irc_list(fd, c);
     }
-    else if (registred == false)
-    {
-        std::vector<std::string> str;
-        str.push_back(c.command);
-        std::string msg = this->showReply(451, fd, str);
-        send(fd, msg.c_str(), msg.length(), 0);
-    }
+    // else if (registred == false)
+    // {
+    //     std::vector<std::string> str;
+    //     str.push_back(c.command);
+    //     std::string msg = this->showReply(451, fd, str);
+    //     send(fd, msg.c_str(), msg.length(), 0);
+    // }
     return (-1);
 }
 
@@ -261,7 +263,7 @@ std::string Server::showReply(int code, int fd, std::vector<std::string> &vars)
     else if (code == 5)
     {
         str.push_back(ip);
-        str.push_back(ft_itoa(this->getPort()));
+        str.push_back(ft_rep_code(this->getPort()));
         s = get_replay(code, str).msg;
         str.clear();
     }
@@ -273,7 +275,7 @@ std::string Server::showReply(int code, int fd, std::vector<std::string> &vars)
     }
     else
         s = get_replay(code, vars).msg;
-    s = ":" + ip + " " + ft_itoa(code) + " " + Nick + " " + s + "\n";
+    s = ":" + ip + " " + ft_rep_code(code) + " " + Nick + " " + s + "\n";
     return s;
 }
 
