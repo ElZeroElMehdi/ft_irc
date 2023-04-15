@@ -65,7 +65,7 @@ class Server
 
         bool irc_list(int fd, s_command &c);
         void sendToChannel(std::string channel, std::string message);
-        void save_user(std::vector<Channels>::iterator it, int fd);
+        void save_user(std::vector<Channels>::iterator it, int fd, s_command c);
         //for new nranch
         
         //welcome
