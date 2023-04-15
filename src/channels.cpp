@@ -12,13 +12,16 @@ Channels::Channels()
     this->keySet = false;
     this->scretSet = true;
     this->inviteSet = false;
+    this->limitSet = false;
     this->outsideSet = true;
+    this->visibleSet = false;
 }
 
 Channels::Channels(std::string name, std::string key)
 {
     this->name = name;
     this->key = key;
+    this->timestamp = time(NULL);
 
     this->topicSet = false;
     this->modeSet = false;
@@ -29,6 +32,8 @@ Channels::Channels(std::string name, std::string key)
     this->scretSet = false;
     this->inviteSet = false;
     this->outsideSet = false;
+    this->limitSet = false;
+    this->visibleSet = false;
 }
 
 Channels::~Channels() {}
@@ -53,6 +58,11 @@ std::string Channels::getMode() const
 std::string Channels::getKey() const
 {
     return this->key;
+}
+
+int Channels::getLimit() const
+{
+    return this->limit;
 }
 
 // ============================ setters ============================
@@ -107,7 +117,22 @@ void Channels::setOutsideSet(bool outsideSet)
     this->outsideSet = outsideSet;
 }
 
+void Channels::setLimitSet(bool limitSet)
+{
+    this->limitSet = limitSet;
+}
+
+void Channels::setVisibleSet(bool visibleSet)
+{
+    this->visibleSet = visibleSet;
+}
+
 // // ============================ getters bool ============================
+
+bool Channels::getLimitSet() const
+{
+    return this->limitSet;
+}
 
 bool Channels::getTopicSet() const
 {
@@ -137,6 +162,11 @@ bool Channels::getInviteSet() const
 bool Channels::getOutsideSet() const
 {
     return this->outsideSet;
+}
+
+bool Channels::getVisibleSet() const
+{
+    return this->visibleSet;
 }
 
 // // ============================ getters vector ============================

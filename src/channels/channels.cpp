@@ -167,7 +167,6 @@ void Channels::addUser(Clients &user)
 {
     if (this->users.find(user.getFd()) == this->users.end())
         this->users.insert(std::pair<int, Clients>(user.getFd(), user));
-    std::cout << "User : " << this->users.find(user.getFd())->second.getUser() << " added to channel : " << this->name << std::endl;
 }
 void Channels::addOp(Clients &op)
 {

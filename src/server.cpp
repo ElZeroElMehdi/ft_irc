@@ -261,7 +261,7 @@ std::string Server::showReply(int code, int fd, std::vector<std::string> &vars)
     else if (code == 5)
     {
         str.push_back(ip);
-        str.push_back(ft_itoa(this->getPort()));
+        str.push_back(ft_rep_code(this->getPort()));
         s = get_replay(code, str).msg;
         str.clear();
     }
@@ -273,7 +273,7 @@ std::string Server::showReply(int code, int fd, std::vector<std::string> &vars)
     }
     else
         s = get_replay(code, vars).msg;
-    s = ":" + ip + " " + ft_itoa(code) + " " + Nick + " " + s + "\n";
+    s = ":" + ip + " " + ft_rep_code(code) + " " + Nick + " " + s + "\n";
     return s;
 }
 

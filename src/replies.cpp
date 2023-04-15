@@ -47,14 +47,14 @@ IRCReply    replay_list( int code )
     rep.push_back((IRCReply){323, "RPL_LISTEND", ":End of /LIST", "Replies RPL_LISTSTART, RPL_LIST, RPL_LISTEND mark the start, actual replies with data and end of the server's response to a LIST command. If there are no channels available to return, only the start and end reply must be sent."});
     rep.push_back((IRCReply){324, "RPL_CHANNELMODEIS", "<channel> <mode> <mode params>", "n/a"});
     rep.push_back((IRCReply){331, "RPL_NOTOPIC", "<channel> :No topic is set", "n/a"});
-    rep.push_back((IRCReply){332, "RPL_TOPIC", "<channel> :<topic>", "When sending a TOPIC message to determine the channel topic, one of two replies is sent. If the topic is set, RPL_TOPIC is sent back else RPL_NOTOPIC."});
+    rep.push_back((IRCReply){332, "RPL_TOPIC", "$1 :$2", "When sending a TOPIC message to determine the channel topic, one of two replies is sent. If the topic is set, RPL_TOPIC is sent back else RPL_NOTOPIC."});
     rep.push_back((IRCReply){341, "RPL_INVITING", "<channel> <nick>", "Returned by the server to indicate that the attempted INVITE message was successful and is being passed onto the end client."});
     rep.push_back((IRCReply){342, "RPL_SUMMONING", "<user> :Summoning user to IRC", "Returned by a server answering a SUMMON message to indicate that it is summoning that user."});
     rep.push_back((IRCReply){351, "RPL_VERSION", "<version>.<debuglevel> <server> :<comments>", "Reply by the server showing its version details. The <version> is the version of the software being used (including any patchlevel revisions) and the <debuglevel> is used to indicate if the server is running in 'debug mode'. The 'comments' field may contain any comments about the version or further version details."});
     rep.push_back((IRCReply){352, "RPL_WHOREPLY", "<channel> <user> <host> <server> <nick> <H|G>[*][@|+] :<hopcount> <real name>", "n/a"});
     rep.push_back((IRCReply){315, "RPL_ENDOFWHO", "<name> :End of /WHO list", "The RPL_WHOREPLY and RPL_ENDOFWHO pair are used to answer a WHO message. The RPL_WHOREPLY is only sent if there is an appropriate match to the WHO query. If there is a list of parameters supplied with a WHO message, a RPL_ENDOFWHO must be sent after processing each list item with <name> being the item."});
-    rep.push_back((IRCReply){353, "RPL_NAMREPLY", "<channel> :[[@|+]<nick> [[@|+]<nick> [...]]]", "n/a"});
-    rep.push_back((IRCReply){366, "RPL_ENDOFNAMES", "<channel> :End of /NAMES list", "To reply to a NAMES message, a reply pair consisting of RPL_NAMREPLY and RPL_ENDOFNAMES is sent by the server back to the client. If there is no channel found as in the query, then only RPL_ENDOFNAMES is returned. The exception to this is when a NAMES message is sent with no parameters and all visible channels and contents are sent back in a series of RPL_NAMEREPLY messages with a RPL_ENDOFNAMES to mark the end."});
+    rep.push_back((IRCReply){353, "RPL_NAMREPLY", "$1 :[[@|+]<nick> [[@|+]<nick> [...]]]", "n/a"});
+    rep.push_back((IRCReply){366, "RPL_ENDOFNAMES", "$1 :End of /NAMES list", "To reply to a NAMES message, a reply pair consisting of RPL_NAMREPLY and RPL_ENDOFNAMES is sent by the server back to the client. If there is no channel found as in the query, then only RPL_ENDOFNAMES is returned. The exception to this is when a NAMES message is sent with no parameters and all visible channels and contents are sent back in a series of RPL_NAMEREPLY messages with a RPL_ENDOFNAMES to mark the end."});
     rep.push_back((IRCReply){364, "RPL_LINKS", "<mask> <server> :<hopcount> <server info>", "n/a"});
     rep.push_back((IRCReply){365, "RPL_ENDOFLINKS", "<mask> :End of /LINKS list", "In replying to the LINKS message, a server must send replies back using the RPL_LINKS numeric and mark the end of the list using an RPL_ENDOFLINKS reply."});
     rep.push_back((IRCReply){367, "RPL_BANLIST", "<channel> <banid>", "n/a"});
@@ -128,7 +128,7 @@ IRCReply    replay_list( int code )
     rep.push_back((IRCReply){472, "ERR_UNKNOWNMODE", "<char> :is unknown mode char to me", "n/a"});
     rep.push_back((IRCReply){473, "ERR_INVITEONLYCHAN", "<channel> :Cannot join channel (+i)", "n/a"});
     rep.push_back((IRCReply){474, "ERR_BANNEDFROMCHAN", "<channel> :Cannot join channel (+b)", "n/a"});
-    rep.push_back((IRCReply){475, "ERR_BADCHANNELKEY", "<channel> :Cannot join channel (+k)", "n/a"});
+    rep.push_back((IRCReply){475, "ERR_BADCHANNELKEY", "$1 :Cannot join channel (+k)", "n/a"});
     rep.push_back((IRCReply){481, "ERR_NOPRIVILEGES", ":Permission Denied- You're not an IRC operator", "Any command requiring operator privileges to operate must return this error to indicate the attempt was unsuccessful."});
     rep.push_back((IRCReply){482, "ERR_CHANOPRIVSNEEDED", "<channel> :You're not channel operator", "Any command requiring 'chanop' privileges (such as MODE messages) must return this error if the client making the attempt is not a chanop on the specified channel."});
     rep.push_back((IRCReply){483, "ERR_CANTKILLSERVER", ":You cant kill a server!", "Any attempts to use the KILL command on a server are to be refused and this error returned directly to the client."});
@@ -184,7 +184,7 @@ IRCReply    get_replay( int code, std::vector<std::string> vars )
     return rep;
 }
 
-std::string ft_itoa(int num) {
+std::string ft_rep_code(int num) {
     char buf[20];
     int i = 0;
 
@@ -227,7 +227,7 @@ std::string prepareRep( int code, std::vector<std::string> vars )
     
     IRCReply rep = get_replay(code, vars);
 
-    return (std::string)":" + "<localhost> " + ft_itoa(code) + " " + "<USER> : " + rep.msg;
+    return (std::string)":" + "<localhost> " + ft_rep_code(code) + " " + "<USER> : " + rep.msg;
 }
 
 // int main()
