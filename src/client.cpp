@@ -78,17 +78,14 @@ Clients::~Clients()
 
 bool Clients::checkIfRegistred()
 {
-    if (!this->nick.empty() && !this->user.empty() && !this->pass.empty())//add password
-    {
+    if (!this->nick.empty() && !this->user.empty() && !this->pass.empty())
         this->isRegistred = true;
-        std::cout << "client registred\n";
-        return true;
-    }
     else
     {
         this->isRegistred = false;
         return false;
     }
+    return true;
 }
 
 void Clients::setIp(std::string ip)

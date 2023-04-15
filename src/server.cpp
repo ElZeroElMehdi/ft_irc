@@ -94,7 +94,7 @@ bool Server::events()
 
         this->addFd(newClient, ClinetAddr);
         std::string s = ":"+this->getIp(this->fd_server)+" NOTICE AUTH :*** Looking up your hostname...\n:"+this->getIp(this->fd_server)+" NOTICE AUTH :*** Found your hostname\n";
-        send(newClient, s.c_str(), s.length(), 0); // send a msg to the client as reply to the connection request
+        send(newClient, s.c_str(), s.length(), 0);
     }
     return true;
 }
@@ -188,6 +188,8 @@ int Server::command_routes(int fd, s_command &c)
         return this->irc_user(fd, c);//should I check if the user is re
     if (info.name == "PASS")
         return this->irc_pass(fd, c);
+    if (info.name == "QUIT")
+        return this->irc_quit(fd, c);
     if (registred == true)
     {
         if (info.name == "WHOIS")
@@ -210,13 +212,6 @@ int Server::command_routes(int fd, s_command &c)
             return this->irc_names(fd, c);
         if (info.name == "BAN")
             return this->irc_ban(fd, c);
-    }
-    else if (registred == false)
-    {
-        std::vector<std::string> str;
-        str.push_back(c.command);
-        std::string msg = this->showReply(451, fd, str);
-        send(fd, msg.c_str(), msg.length(), 0);
     }
     return (-1);
 }
@@ -261,7 +256,7 @@ std::string Server::showReply(int code, int fd, std::vector<std::string> &vars)
     else if (code == 5)
     {
         str.push_back(ip);
-        str.push_back(ft_itoa(this->getPort()));
+        str.push_back(ft_rip_code(this->getPort()));
         s = get_replay(code, str).msg;
         str.clear();
     }
@@ -273,7 +268,7 @@ std::string Server::showReply(int code, int fd, std::vector<std::string> &vars)
     }
     else
         s = get_replay(code, vars).msg;
-    s = ":" + ip + " " + ft_itoa(code) + " " + Nick + " " + s + "\n";
+    s = ":" + ip + " " + ft_rip_code(code) + " " + Nick + " " + s + "\n";
     return s;
 }
 
@@ -293,3 +288,4 @@ bool Server::isPass(std::string pass)
         return true;
     return false;
 }
+
