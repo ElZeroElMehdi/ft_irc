@@ -196,6 +196,20 @@ int Server::command_routes(int fd, s_command &c)
             return this->irc_privmsg(fd, c);
         if (info.name == "JOIN")
             return this->irc_join(fd, c);
+        if (info.name == "PART")
+            return this->irc_part(fd, c);
+        if (info.name == "TOPIC")
+            return this->irc_topic(fd, c);
+        if (info.name == "INVITE")
+            return this->irc_invite(fd, c);
+        if (info.name == "MODE")
+            return this->irc_mode(fd, c);
+        if (info.name == "KICK")
+            return this->irc_kick(fd, c);
+        if (info.name == "NAMES")
+            return this->irc_names(fd, c);
+        if (info.name == "BAN")
+            return this->irc_ban(fd, c);
     }
     else if (registred == false)
     {

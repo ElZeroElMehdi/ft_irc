@@ -55,6 +55,13 @@ class Server
         bool irc_privmsg(int fd, s_command &c);
         // bool irc_part(int fd, s_command &c);
         // bool irc_quit(int fd, s_command &c);
+        bool irc_part(int fd, s_command &c);
+        bool irc_topic(int fd, s_command &c);
+        bool irc_invite(int fd, s_command &c);
+        bool irc_mode(int fd, s_command &c);
+        bool irc_kick(int fd, s_command &c);
+        bool irc_names(int fd, s_command &c);
+        bool irc_ban(int fd, s_command &c);
 
         ~Server(); 
 };

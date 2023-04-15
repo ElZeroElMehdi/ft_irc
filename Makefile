@@ -14,6 +14,7 @@ SRCS =  ./src/channels.cpp\
 		./src/commands.cpp\
 		./src/utills.cpp\
 		./src/server_commands.cpp\
+		./src/channels_commands.cpp\
 
 headers = ./src/*.hpp
 
