@@ -43,6 +43,7 @@ std::vector<IRCCommand> commands_list()
     rep.push_back((IRCCommand){"TOPIC", 1});
     rep.push_back((IRCCommand){"PONG", 1});
     rep.push_back((IRCCommand){"PING", 1});
+    rep.push_back((IRCCommand){"INVITE", 1});
     return rep;
 }
 
