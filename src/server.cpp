@@ -214,6 +214,10 @@ int Server::command_routes(int fd, s_command &c)
             return this->irc_ban(fd, c);
         if (info.name == "LIST")
             return this->irc_list(fd, c);
+        if (info.name == "PONG")
+            return this->irc_pong(fd, c);
+        if (info.name == "PING")
+            return this->irc_ping(fd, c);
     }
     return (-1);
 }

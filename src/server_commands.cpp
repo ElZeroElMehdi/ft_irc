@@ -290,3 +290,54 @@ bool Server::irc_quit(int fd, s_command &c)
     this->cl.erase(fd);
     return (1);
 }
+
+bool Server::irc_pong(int fd, s_command &c)
+{
+    std::string rep;
+    if (c.target.size() == 0)
+    {
+        std::vector<std::string> vars;
+        vars.push_back(str_toupper(c.command));
+        rep = showReply(461, fd, vars);
+        send(fd, rep.c_str(), rep.length(), 0);
+        return (0);
+    }
+    int i = 0;
+    while(c.original[i] == ' ')
+        i++;
+    rep = "->" + c.original.substr(i) + "\n";
+    rep = replacer(rep, "->" + c.command, "PING");
+    send(fd, rep.c_str(), rep.length(), 0);
+    return (1);
+}
+
+std::string str_join(std::vector<std::string> &v, std::string delim)
+{
+    std::string s;
+    for (std::vector<std::string>::iterator it = v.begin(); it != v.end(); ++it)
+    {
+        s += *it;
+        if (it + 1 != v.end())
+            s += delim;
+    }
+    return (s);
+}
+
+bool Server::irc_ping(int fd, s_command &c)
+{
+    std::string rep;
+    if (c.target.size() == 0)
+    {
+        std::vector<std::string> vars;
+        vars.push_back(str_toupper(c.command));
+        rep = showReply(461, fd, vars);
+        send(fd, rep.c_str(), rep.length(), 0);
+        return (0);
+    }
+    if (c.original.find(":") != std::string::npos && c.target.size() == 0)
+        rep = ":" + this->getIp(fd) + " PONG " + this->getIp(fd) + " :" + c.original.substr(c.original.find(":") + 1) + "\n";
+    else
+        rep = ":" + this->getIp(fd) + " PONG " + this->getIp(fd) + " :" + str_join(c.target, ",") + "\n";
+    send(fd, rep.c_str(), rep.length(), 0);
+    return (1);
+}
