@@ -94,7 +94,7 @@ bool Server::events()
 
         this->addFd(newClient, ClinetAddr);
         std::string s = ":"+this->getIp(this->fd_server)+" NOTICE AUTH :*** Looking up your hostname...\n:"+this->getIp(this->fd_server)+" NOTICE AUTH :*** Found your hostname\n";
-        send(newClient, s.c_str(), s.length(), 0); // send a msg to the client as reply to the connection request
+        send(newClient, s.c_str(), s.length(), 0);
     }
     return true;
 }
@@ -188,6 +188,8 @@ int Server::command_routes(int fd, s_command &c)
         return this->irc_user(fd, c);//should I check if the user is re
     if (info.name == "PASS")
         return this->irc_pass(fd, c);
+    if (info.name == "QUIT")
+        return this->irc_quit(fd, c);
     if (registred == true)
     {
         if (info.name == "WHOIS")
@@ -213,13 +215,6 @@ int Server::command_routes(int fd, s_command &c)
         if (info.name == "LIST")
             return this->irc_list(fd, c);
     }
-    // else if (registred == false)
-    // {
-    //     std::vector<std::string> str;
-    //     str.push_back(c.command);
-    //     std::string msg = this->showReply(451, fd, str);
-    //     send(fd, msg.c_str(), msg.length(), 0);
-    // }
     return (-1);
 }
 
@@ -295,3 +290,4 @@ bool Server::isPass(std::string pass)
         return true;
     return false;
 }
+

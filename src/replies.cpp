@@ -110,7 +110,7 @@ IRCReply    replay_list( int code )
     rep.push_back((IRCReply){424, "ERR_FILEERROR", ":File error doing <file op> on <file>", "Generic error message used to report a failed file operation during the processing of a message."});
     rep.push_back((IRCReply){431, "ERR_NONICKNAMEGIVEN", ":No nickname given", "Returned when a nickname parameter expected for a command and isn't found."});
     rep.push_back((IRCReply){432, "ERR_ERRONEUSNICKNAME", "$1 :Erroneus nickname", "Returned after receiving a NICK message which contains characters which do not fall in the defined set. See section x.x.x for details on valid nicknames."});
-    rep.push_back((IRCReply){433, "ERR_NICKNAMEINUSE", "<nick> :Nickname is already in use", "Returned when a NICK message is processed that results in an attempt to change to a currently existing nickname."});
+    rep.push_back((IRCReply){433, "ERR_NICKNAMEINUSE", "$1 :Nickname is already in use", "Returned when a NICK message is processed that results in an attempt to change to a currently existing nickname."});
     rep.push_back((IRCReply){436, "ERR_NICKCOLLISION", "<nick> :Nickname collision KILL", "Returned by a server to a client when it detects a nickname collision (registered of a NICK that already exists by another server)."});
     rep.push_back((IRCReply){441, "ERR_USERNOTINCHANNEL", "<nick> <channel> :They aren't on that channel", "Returned by the server to indicate that the target user of the command is not on the given channel."});
     rep.push_back((IRCReply){442, "ERR_NOTONCHANNEL", "<channel> :You're not on that channel", "Returned by the server whenever a client tries to perform a channel effecting command for which the client isn't a member."});

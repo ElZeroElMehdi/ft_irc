@@ -45,6 +45,7 @@ std::vector<IRCCommand> commands_list()
     rep.push_back((IRCCommand){"NICK", 0});
     rep.push_back((IRCCommand){"USER", 0});
     rep.push_back((IRCCommand){"PASS", 0});
+    rep.push_back((IRCCommand){"QUIT", 0});
     // need to be registred
     rep.push_back((IRCCommand){"JOIN", 1});
     rep.push_back((IRCCommand){"PART", 1});

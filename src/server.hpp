@@ -54,7 +54,7 @@ class Server
         // bool irc_pong(int fd, s_command &c);
         bool irc_privmsg(int fd, s_command &c);
         // bool irc_part(int fd, s_command &c);
-        // bool irc_quit(int fd, s_command &c);
+        bool irc_quit(int fd, s_command &c);
         bool irc_part(int fd, s_command &c);
         bool irc_topic(int fd, s_command &c);
         bool irc_invite(int fd, s_command &c);
@@ -62,8 +62,12 @@ class Server
         bool irc_kick(int fd, s_command &c);
         bool irc_names(int fd, s_command &c);
         bool irc_ban(int fd, s_command &c);
+
         bool irc_list(int fd, s_command &c);
         //for new nranch
+
+        
+        //welcome
         ~Server(); 
 };
 #endif

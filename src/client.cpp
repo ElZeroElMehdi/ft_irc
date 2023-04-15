@@ -10,7 +10,6 @@ Clients::Clients(int fd) : client_fd(fd)
 void Clients::setNick(std::string nick)
 {
     this->nick = nick;
-    std::cout << "limChat fuck u"<< std::endl;
 }
 void Clients::setUser(std::string user)
 {
@@ -78,17 +77,14 @@ Clients::~Clients()
 
 bool Clients::checkIfRegistred()
 {
-    if (!this->nick.empty() && !this->user.empty() && !this->pass.empty())//add password
-    {
+    if (!this->nick.empty() && !this->user.empty() && !this->pass.empty())
         this->isRegistred = true;
-        std::cout << "client registred\n";
-        return true;
-    }
     else
     {
         this->isRegistred = false;
         return false;
     }
+    return true;
 }
 
 void Clients::setIp(std::string ip)
