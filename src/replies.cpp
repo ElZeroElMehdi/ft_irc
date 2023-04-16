@@ -54,7 +54,7 @@ IRCReply    replay_list( int code )
     rep.push_back((IRCReply){351, "RPL_VERSION", "<version>.<debuglevel> <server> :<comments>", "Reply by the server showing its version details. The <version> is the version of the software being used (including any patchlevel revisions) and the <debuglevel> is used to indicate if the server is running in 'debug mode'. The 'comments' field may contain any comments about the version or further version details."});
     rep.push_back((IRCReply){352, "RPL_WHOREPLY", "<channel> <user> <host> <server> <nick> <H|G>[*][@|+] :<hopcount> <real name>", "n/a"});
     rep.push_back((IRCReply){315, "RPL_ENDOFWHO", "<name> :End of /WHO list", "The RPL_WHOREPLY and RPL_ENDOFWHO pair are used to answer a WHO message. The RPL_WHOREPLY is only sent if there is an appropriate match to the WHO query. If there is a list of parameters supplied with a WHO message, a RPL_ENDOFWHO must be sent after processing each list item with <name> being the item."});
-    rep.push_back((IRCReply){353, "RPL_NAMREPLY", "$1 :$2", "n/a"});
+    rep.push_back((IRCReply){353, "RPL_NAMREPLY", "= $1 :$2", "n/a"});
     rep.push_back((IRCReply){366, "RPL_ENDOFNAMES", "$1 :End of /NAMES list", "To reply to a NAMES message, a reply pair consisting of RPL_NAMREPLY and RPL_ENDOFNAMES is sent by the server back to the client. If there is no channel found as in the query, then only RPL_ENDOFNAMES is returned. The exception to this is when a NAMES message is sent with no parameters and all visible channels and contents are sent back in a series of RPL_NAMEREPLY messages with a RPL_ENDOFNAMES to mark the end."});
     rep.push_back((IRCReply){364, "RPL_LINKS", "<mask> <server> :<hopcount> <server info>", "n/a"});
     rep.push_back((IRCReply){365, "RPL_ENDOFLINKS", "<mask> :End of /LINKS list", "In replying to the LINKS message, a server must send replies back using the RPL_LINKS numeric and mark the end of the list using an RPL_ENDOFLINKS reply."});
@@ -94,7 +94,7 @@ IRCReply    replay_list( int code )
     //ERROR REPLIES
     rep.push_back((IRCReply){401, "ERR_NOSUCHNICK", "$1 :No such nick/channel", "Used to indicate the nickname parameter supplied to a command is currently unused."});
     rep.push_back((IRCReply){402, "ERR_NOSUCHSERVER", "<server name> :No such server", "Used to indicate the server name given currently doesn't exist."});
-    rep.push_back((IRCReply){403, "ERR_NOSUCHCHANNEL", "<channel name> :No such channel", "Used to indicate the given channel name is invalid."});
+    rep.push_back((IRCReply){403, "ERR_NOSUCHCHANNEL", "$1 :No such channel", "Used to indicate the given channel name is invalid."});
     rep.push_back((IRCReply){404, "ERR_CANNOTSENDTOCHAN", "<channel name> :Cannot send to channel", "Sent to a user who is either (a) not on a channel which is mode +n or (b) not a chanop (or mode +v) on a channel which has mode +m set and is trying to send a PRIVMSG message to that channel."});
     rep.push_back((IRCReply){405, "ERR_TOOMANYCHANNELS", "<channel name> :You have joined too many channels", "Sent to a user when they have joined the maximum number of allowed channels and they try to join another channel."});
     rep.push_back((IRCReply){406, "ERR_WASNOSUCHNICK", "<nickname> :There was no such nickname", "Returned by WHOWAS to indicate there is no history information for that nickname."});
