@@ -231,20 +231,31 @@ bool Server::irc_privmsg_notice(int fd, s_command &c)
         for(std::vector<std::string>::iterator it = c.target.begin();it != c.target.end();++it)
         {
             //check if  *it channel or user
-            std::string msg = ":"+this->cl.find(fd)->second.getNick()+"!~"+this->cl.find(fd)->second.getUser()+"@"+this->getIp(fd)+" " + str_toupper(c.command) + " "+*it+" :";
+            std::string msg = ":"+this->cl.find(fd)->second.getNick()+"!~"+this->cl.find(fd)->second.getUser()+"@"+this->getIp(fd)+" " + str_toupper(c.command) + " "+(*it)+" :";
+            if (!c.first_pram.empty())
+                msg += c.first_pram + "\n";
+            else
+            {
+                if (c.second_pram.substr(0, 1) == ":")
+                    msg += c.second_pram.substr(1) + "\n";
+                else
+                    msg += c.second_pram + "\n";
+            }
+            std::cout << "msg :" << msg << std::endl;
+            
+            if ((*it)[0] == '#')
+            {
+                sendToChannel(*it, msg);
+                continue;
+            }
+            
             int to = this->findClinet(*it);
-            std::cout << "to :" << to << std::endl;
             if (to == -1)
             {
                 msg = this->showReply(401, fd, c.target) + "\n";
                 send(fd, msg.c_str(), msg.length(), 0);
                 continue;
             }
-            else if (!c.first_pram.empty())
-                msg += c.first_pram + "\n";
-            else
-                msg += c.second_pram + "\n";
-            std::cout << "msg :" << msg << std::endl;
             send(to, msg.c_str(), msg.length(), 0);
         }
         return 1;
@@ -313,12 +324,6 @@ bool Server::irc_pong(int fd, s_command &c)
         send(fd, rep.c_str(), rep.length(), 0);
         return (0);
     }
-    int i = 0;
-    while(c.original[i] == ' ')
-        i++;
-    rep = "->" + c.original.substr(i) + "\n";
-    rep = replacer(rep, "->" + c.command, "PING");
-    send(fd, rep.c_str(), rep.length(), 0);
     return (1);
 }
 

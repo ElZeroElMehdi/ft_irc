@@ -17,23 +17,23 @@ static std::string current_time()
 std::vector<std::string> help()
 {
     std::vector<std::string> msg;
-    msg.push_back ("The following commands are available in server:\r\n");
-    msg.push_back ("NICK <nickname> : sets your nickname\r\n");
-    msg.push_back ("USER <username> <hostname> <servername> <realname> : sets your username\r\n");
-    msg.push_back ("PASS <password> : sets your password\r\n");
-    msg.push_back ("QUIT [message]> disconnects you from the server\r\n");
-    msg.push_back ("JOIN <channel> : joins a channel\r\n");
-    msg.push_back ("PART <channel> : leaves a channel\r\n");
-    msg.push_back ("PRIVMSG <channel> <message> : sends a message to a channel\r\n");
-    msg.push_back ("NOTICE <channel> <message> : sends a notice to a channel\r\n");
-    msg.push_back ("WHOIS <nickname> : gets information about a user\r\n");
-    msg.push_back ("NAMES <channel> : gets a list of users in a channel\r\n");
-    msg.push_back ("LIST : gets a list of channels\r\n");
-    msg.push_back ("TOPIC <channel> : gets the topic of a channel\r\n");
-    msg.push_back ("BOT <command> : sends a command to the bot\r\n");
-    msg.push_back ("The following commands are available in bot>\r\n");
-    msg.push_back ("TIME : gets the current time\r\n");
-    msg.push_back ("HELP : gets a list of commands\r\n");
+    msg.push_back ("The following commands are available in server:\r");
+    msg.push_back ("NICK <nickname> : sets your nickname\r");
+    msg.push_back ("USER <username> <hostname> <servername> <realname> : sets your username\r");
+    msg.push_back ("PASS <password> : sets your password\r");
+    msg.push_back ("QUIT [message]> disconnects you from the server\r");
+    msg.push_back ("JOIN <channel> : joins a channel\r");
+    msg.push_back ("PART <channel> : leaves a channel\r");
+    msg.push_back ("PRIVMSG <channel> <message> : sends a message to a channel\r");
+    msg.push_back ("NOTICE <channel> <message> : sends a notice to a channel\r");
+    msg.push_back ("WHOIS <nickname> : gets information about a user\r");
+    msg.push_back ("NAMES <channel> : gets a list of users in a channel\r");
+    msg.push_back ("LIST : gets a list of channels\r");
+    msg.push_back ("TOPIC <channel> : gets the topic of a channel\r");
+    msg.push_back ("BOT <command> : sends a command to the bot\r");
+    msg.push_back ("The following commands are available in bot>\r");
+    msg.push_back ("TIME : gets the current time\r");
+    msg.push_back ("HELP : gets a list of commands\r");
     return (msg);
 }
 
@@ -58,7 +58,7 @@ bool Server::irc_bot(int fd, s_command &c)
         std::string tmp = str_toupper(*it);
         if (tmp == "TIME")
         {
-            vars.push_back("server : ");
+            vars.push_back(this->getIp(this->fd_server));
             vars.push_back(current_time());
             msg = showReply(391, fd, vars);
             send(fd, msg.c_str(), msg.size(), 0);
