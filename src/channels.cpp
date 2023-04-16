@@ -22,6 +22,7 @@ Channels::Channels(std::string name, std::string key)
     this->name = name;
     this->key = key;
     this->timestamp = time(NULL);
+    this->topic = "Welcome to " + name;
 
     this->topicSet = false;
     this->modeSet = false;

@@ -60,7 +60,7 @@ class Server
         bool irc_invite(int fd, s_command &c);
         bool irc_mode(int fd, s_command &c);
         bool irc_kick(int fd, s_command &c);
-        bool irc_names(int fd, s_command &c);
+        bool irc_names(int fd, const s_command &c);
         bool irc_ban(int fd, s_command &c);
 
         bool irc_pong(int fd, s_command &c);

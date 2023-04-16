@@ -3,18 +3,17 @@
 
 void Server::save_user(std::vector<Channels>::iterator it, int fd, s_command c)
 {
+    (void)c;
     it->addUser(this->cl.find(fd)->second);
     std::vector<std::string> tmp;
-    std::string msg = ":" + this->getIp(fd) + ".ip " + "JOIN :" + it->getName() + "\n";
+    std::string msg = ":"+this->cl.find(fd)->second.getNick()+"!~"+this->cl.find(fd)->second.getUser()+"@"+this->getIp(fd) + ".ip " + "JOIN :" + it->getName() + "\n";
     sendToChannel(it->getName(), msg);
-    if (it->getTopicSet())
-    {
-        tmp.push_back(it->getName());
-        tmp.push_back(it->getTopic());
-        msg = showReply(332, fd, tmp);
-        send(fd, msg.c_str(), msg.length(), 0);
-    }
-    irc_names(fd, c);
+    tmp.push_back(it->getName());
+    tmp.push_back(it->getTopic());
+    msg = showReply(332, fd, tmp);
+    send(fd, msg.c_str(), msg.length(), 0);
+    Commands names_cmd = Commands("names " + it->getName());
+    irc_names(fd, names_cmd.getList()[0]);
 }
 
 bool Server::find_channel(std::string &name, int fd, s_command c)
@@ -121,7 +120,14 @@ int Server::irc_join(int fd, s_command &c)
     std::vector<std::string> &targs = c.target; 
     for (std::vector<std::string>::iterator it = targs.begin(); it != targs.end(); ++it)
     {
-        if (!find_channel(*it, fd, c))
+        if (it->c_str()[0] != '#')
+        {
+            std::vector<std::string> params;
+            std::cout << "it: " << *it << std::endl;
+            params.push_back(*it);
+            send(fd, showReply(403, fd, params).c_str(), showReply(403, fd, params).size(), 0);
+        }
+        else if (!find_channel(*it, fd, c))
         {
             std::string pass = "";
             pass = c.first_pram;
@@ -131,10 +137,15 @@ int Server::irc_join(int fd, s_command &c)
             newChannel.addUser(this->cl.find(fd)->second);
             newChannel.addOp(this->cl.find(fd)->second);
             std::vector<std::string> tmp;
-            std::string msg = ":" + this->getIp(fd) + ".ip " + "JOIN :" + *it + "\n";
+            std::string msg = ":"+this->cl.find(fd)->second.getNick()+"!~"+this->cl.find(fd)->second.getUser()+"@"+this->getIp(fd) + ".ip " + "JOIN :" + *it + "\n";
             send(fd, msg.c_str(), msg.length(), 0);
-            irc_names(fd, c);
             ch.push_back(newChannel);
+            tmp.push_back(*it);
+            tmp.push_back(newChannel.getTopic());
+            msg = showReply(332, fd, tmp);
+            send(fd, msg.c_str(), msg.length(), 0);
+            Commands names_cmd = Commands("names " + *it);
+            irc_names(fd, names_cmd.getList()[0]);
         }
     }
     return 1;
@@ -164,6 +175,9 @@ bool Server::irc_part(int fd, s_command &c)
                     it2->removeUser(this->cl.find(fd)->second);
                     if (it2->getUsers().size() == 0)
                         this->ch.erase(it2);
+                    std::string msg = ":"+this->cl.find(fd)->second.getNick()+"!~"+this->cl.find(fd)->second.getUser()+"@"+this->getIp(fd) + ".ip " + "PART :" + *it + "\n";
+                    send(fd, msg.c_str(), msg.length(), 0);
+                    sendToChannel(*it, msg.c_str());
                     return (true);
                 }
                 //error 442
@@ -330,9 +344,16 @@ bool Server::irc_kick(int fd, s_command &c)
     return (true);
 }
 
-bool Server::irc_names(int fd, s_command &c)
+bool Server::irc_names(int fd, const s_command &c)
 {
     std::vector<std::string> params;
+    if (c.target.size() == 0)
+    {
+        params.push_back("*");
+        std::string error = showReply(366, fd, params);
+        send(fd, error.c_str(), error.size(), 0);
+        return false;
+    }
     params.push_back(c.target[0]);
     if (c.target.size() > 1)
     {
@@ -340,7 +361,8 @@ bool Server::irc_names(int fd, s_command &c)
         std::string channel = splitString2(c.original, " ")[1];
         std::vector<std::string> params;
         params.push_back(channel);
-        send(fd, showReply(403, fd, params).c_str(), showReply(403, fd, params).size(), 0);
+        std::string error = showReply(403, fd, params);
+        send(fd, error.c_str(), error.size(), 0);
         return false;
     }
     for (std::vector<Channels>::iterator it = this->ch.begin(); it != this->ch.end(); ++it)
@@ -363,9 +385,9 @@ bool Server::irc_names(int fd, s_command &c)
             }
         }
     }
+    std::cout << "params size :" << params.size() << std::endl;
     if (params.size() == 1)
     {
-        //error 403
         std::string channel = splitString2(c.original, " ")[1];
         std::vector<std::string> params;
         params.push_back(channel);
@@ -374,17 +396,16 @@ bool Server::irc_names(int fd, s_command &c)
     }
     else
     {
-        for (std::vector<std::string>::iterator it = params.begin(); it != params.end(); ++it)
+        for (std::vector<std::string>::iterator it = params.begin() + 1; it != params.end(); ++it)
         {
-            // if user is op add @
-            for (std::vector<Channels>::iterator it2 = this->ch.begin()+1; it2 != this->ch.end(); ++it2)
+            for (std::vector<Channels>::iterator it2 = this->ch.begin(); it2 != this->ch.end(); ++it2)
             {
                 if (it2->getName() == c.target[0])
                 {
-                    if (it2->getOps().find(fd)->second.getNick() == *it)
-                        *it = "@" + *it;
-                    else
-                        *it = *it;
+                    std::map<int, Clients> users = it2->getOps();
+                    for (std::map<int, Clients>::iterator it3 = users.begin(); it3 != users.end(); ++it3)
+                        if (it3->second.getNick() == *it)
+                            *it = "@" + *it;
                 }
             }
         }
