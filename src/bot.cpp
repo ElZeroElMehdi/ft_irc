@@ -1,5 +1,6 @@
 #include "server.hpp"
 #include <ctime>
+#include <curl/curl.h>
 
 static std::string current_time()
 {
@@ -14,7 +15,7 @@ static std::string current_time()
     return (msg);
 }
 
-std::vector<std::string> help()
+static std::vector<std::string> help()
 {
     std::vector<std::string> msg;
     msg.push_back ("The following commands are available in server:\r");
@@ -34,7 +35,45 @@ std::vector<std::string> help()
     msg.push_back ("The following commands are available in bot>\r");
     msg.push_back ("TIME : gets the current time\r");
     msg.push_back ("HELP : gets a list of commands\r");
+    msg.push_back ("ADHAN <city> : gets the adhan of a city\r");
     return (msg);
+}
+
+static size_t write_callback(char* ptr, size_t size, size_t nmemb, void* userdata) {
+    std::string* buffer = static_cast<std::string*>(userdata);
+    buffer->append(ptr, size * nmemb);
+    return size * nmemb;
+}
+
+static std::string adhanCity(std::string city)
+{
+    std::string value;
+    curl_global_init(CURL_GLOBAL_ALL);
+    // Create a CURL object.
+    CURL* curl = curl_easy_init();
+    std::string link = "https://voice.mediaplus.ma/api/v1/adan/Casablanca";
+    if (!city.empty())
+        link = "https://voice.mediaplus.ma/api/v1/adan/" + city;
+
+    
+    if (curl) {
+        // Set the URL to fetch.
+        curl_easy_setopt(curl, CURLOPT_URL, link.c_str());
+        // Set the callback function to handle the received data.
+        std::string response;
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+        // Perform the HTTP request.
+        CURLcode result = curl_easy_perform(curl);
+        // Check for any errors.
+        if (result != CURLE_OK)
+            value = "no such city or bad connection with voice.mediaplus.ma";
+        else 
+            value = response;
+        curl_easy_cleanup(curl);
+    }
+    curl_global_cleanup();
+    return value;
 }
 
 bool Server::irc_bot(int fd, s_command &c)
@@ -78,6 +117,40 @@ bool Server::irc_bot(int fd, s_command &c)
             }
             return (true);
         }
+        else if (tmp == "ADHAN")
+        {
+            if (c.target.size() != 1 || c.first_pram.size() == 0)
+            {
+                vars.push_back("ADHAN");
+                msg = this->showReply(461, fd, vars);
+                send(fd, msg.c_str(), msg.size(), 0);
+                vars.clear();
+                return (false);
+            }
+            std::string city = c.first_pram;
+            std::string value = adhanCity(city);
+            if (value.size() == 0)
+            {
+                vars.push_back(city);
+                msg = this->showReply(300, fd, vars);
+                send(fd, msg.c_str(), msg.size(), 0);
+                return (false);
+            }
+            vars = splitString2(value, ",");
+            std::vector<std::string> tmp;
+            tmp.push_back("NOTICE : IF WRRONG CITY THIS API WHOULD DISPLAY A DEFAULT TIME (CASABLANCA-MOROCCO)\r");
+            msg = this->showReply(300, fd, tmp);
+            send(fd, msg.c_str(), msg.length(), 0);
+            tmp.clear();
+            for (std::vector<std::string>::iterator it = vars.begin(); it != vars.end(); it++)
+            {
+                tmp.push_back(*it);
+                msg = this->showReply(300, fd, tmp);
+                send(fd, msg.c_str(), msg.size(), 0);
+                tmp.clear();
+            }
+            return (true);
+        }
         else
         {
             vars.push_back(tmp);
@@ -87,4 +160,14 @@ bool Server::irc_bot(int fd, s_command &c)
         }
     }
     return false;
+}
+
+
+bool Server::irc_send(int fd, s_command &c)
+{
+    if (c.target.size() == 0 || c.first_pram.size() == 0 || c.second_pram.size() == 0)
+    {
+        
+        return (false);
+    }
 }

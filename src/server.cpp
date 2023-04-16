@@ -133,6 +133,8 @@ bool Server::isUserEx(int fd)
 
 Server::~Server()
 {
+    for (std::map<int, Clients>::iterator it = this->cl.begin(); it != this->cl.end(); it++)
+        close(it->first);
     close(this->fd_server);
 }
 
