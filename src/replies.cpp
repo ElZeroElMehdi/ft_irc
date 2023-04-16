@@ -4,9 +4,9 @@ IRCReply    replay_list( int code )
 {
     std::vector<IRCReply> rep;
     //
-    rep.push_back((IRCReply){001, "RPL_WELCOME", "Welcome to the Internet Relay Network $1!$2@$3", "n/a"});
+    rep.push_back((IRCReply){001, "RPL_WELCOME", "Welcome to the Internet Relay Network $1!~$2@$3", "n/a"});
     rep.push_back((IRCReply){002, "RPL_YOURHOST", "Your host is $1, running version $2", "n/a"});
-    rep.push_back((IRCReply){003, "RPL_CREATED", "This server was created $1", "n/a"});
+    rep.push_back((IRCReply){003, "RPL_CREATED", "This server was created $1 UTC", "n/a"});
     rep.push_back((IRCReply){004, "RPL_MYINFO", "$1 $2 $3 $4", "n/a"});
     rep.push_back((IRCReply){005, "RPL_BOUNCE", "Try server $1, port $2", "Sent by the server to a user to suggest an alternative server.  This is often used when the connection is refused because the server is already full."});
 
@@ -29,7 +29,7 @@ IRCReply    replay_list( int code )
     rep.push_back((IRCReply){492, "ERR_NOSERVICEHOST", "n/a", "n/a"});
 
     //COMMAND RESPONSES
-    rep.push_back((IRCReply){300, "RPL_NONE", "n/a", "Dummy reply number. Not used."});
+    rep.push_back((IRCReply){300, "RPL_NONE", "$1", "Dummy reply number. Not used."});
     rep.push_back((IRCReply){301, "RPL_AWAY", "<nick> :<away message>", "n/a"});
     rep.push_back((IRCReply){302, "RPL_USERHOST", ":[<reply>{<space><reply>}]", "Reply format used by USERHOST to list replies to the query list. The reply string is composed as follows: <reply> ::= <nick>['*'] '=' <'+'|'-'><hostname>. The '*' indicates whether the client has registered as an Operator. The '-' or '+' characters represent whether the client has set an AWAY message or not respectively."});
     rep.push_back((IRCReply){303, "RPL_ISON", ":[<nick> {<space><nick>}]", "Reply format used by ISON to list replies to the query list."});
@@ -60,14 +60,14 @@ IRCReply    replay_list( int code )
     rep.push_back((IRCReply){365, "RPL_ENDOFLINKS", "<mask> :End of /LINKS list", "In replying to the LINKS message, a server must send replies back using the RPL_LINKS numeric and mark the end of the list using an RPL_ENDOFLINKS reply."});
     rep.push_back((IRCReply){367, "RPL_BANLIST", "<channel> <banid>", "n/a"});
     rep.push_back((IRCReply){368, "RPL_ENDOFBANLIST", "<channel> :End of channel ban list", "When listing the active 'bans' for a given channel, a server is required to send the list back using the RPL_BANLIST and RPL_ENDOFBANLIST messages. A separate RPL_BANLIST is sent for each active banid. After the banids have been listed (or if none present) a RPL_ENDOFBANLIST must be sent."});
-    rep.push_back((IRCReply){371, "RPL_INFO", ":<string>", "n/a"});
+    rep.push_back((IRCReply){371, "RPL_INFO", ":$1", "n/a"});
     rep.push_back((IRCReply){374, "RPL_ENDOFINFO", ":End of /INFO list", "A server responding to an INFO message is required to send all its 'info' in a series of RPL_INFO messages with a RPL_ENDOFINFO reply to indicate the end of the replies."});
     rep.push_back((IRCReply){375, "RPL_MOTDSTART", ":- <server> Message of the day - ", "n/a"});
     rep.push_back((IRCReply){372, "RPL_MOTD", ":- <text>", "n/a"});
     rep.push_back((IRCReply){376, "RPL_ENDOFMOTD", ":End of /MOTD command", "When responding to the MOTD message and the MOTD file is found, the file is displayed line by line, with each line no longer than 80 characters, using RPL_MOTD format replies. These should be surrounded by a RPL_MOTDSTART (before the RPL_MOTDs) and an RPL_ENDOFMOTD (after)."});
     rep.push_back((IRCReply){381, "RPL_YOUREOPER", ":You are now an IRC operator", "RPL_YOUREOPER is sent back to a client which has just successfully issued an OPER message and gained operator status."});
     rep.push_back((IRCReply){382, "RPL_REHASHING", "<config file> :Rehashing", "If the REHASH option is used and an operator sends a REHASH message, an RPL_REHASHING is sent back to the operator."});
-    rep.push_back((IRCReply){391, "RPL_TIME", "<server> :<string showing server's local time>", "When replying to the TIME message, a server must send the reply using the RPL_TIME format above. The string showing the time need only contain the correct day and time there. There is no further requirement for the time string."});
+    rep.push_back((IRCReply){391, "RPL_TIME", "$1 :$2", "When replying to the TIME message, a server must send the reply using the RPL_TIME format above. The string showing the time need only contain the correct day and time there. There is no further requirement for the time string."});
     rep.push_back((IRCReply){392, "RPL_USERSSTART", ":UserID Terminal Host", "n/a"});
     rep.push_back((IRCReply){393, "RPL_USERS", ":%-8s %-9s %-8s", "n/a"});
     rep.push_back((IRCReply){394, "RPL_ENDOFUSERS", ":End of users", "n/a"});

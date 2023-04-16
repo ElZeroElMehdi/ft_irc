@@ -4,7 +4,7 @@
 void Server::welcome(int fd, s_command &c)
 {
     Clients &user = this->cl.find(fd)->second;
-    if (!user.getNick().empty() && !user.getUser().empty() && !user.getPass().empty() && !user.getRegistred())
+    if (!user.getNick().empty() && !user.getUser().empty() && !user.getPass().empty() && !user.getRegistred() && !user.getStatus())
     {
         std::string msg = showReply(1, fd, c.target);
         send(fd, msg.c_str(), msg.length(), 0);
@@ -102,6 +102,8 @@ int Server::irc_nick(int fd, s_command &c)
     std::string error;
     if (c.target.size() && !c.target[0].empty())
     {
+        if (this->cl.find(fd)->second.getNick() == c.target[0])
+            return 1;
         if (!isValidNickname(fd, c.target[0]))
             return (0);
         if(this->isUserEx(this->findClinet(c.target[0])))
@@ -112,9 +114,18 @@ int Server::irc_nick(int fd, s_command &c)
             send(fd, error.c_str(), error.length(), 0);
             return (0);
         }
-        this->cl.find(fd)->second.setNick(c.target[0]);
-        welcome(fd, c);
-        this->cl.find(fd)->second.checkIfRegistred();
+        else
+        {
+            if (this->cl.find(fd)->second.getRegistred() == true)
+            {
+                std::string msg = ":" + this->cl.find(fd)->second.getNick() + "!~" + this->cl.find(fd)->second.getUser() + "@" + this->cl.find(fd)->second.getIp() + ".ip NICK :" + c.target[0] + "\n";
+                send(fd, msg.c_str(), msg.length(), 0);
+            }
+            this->cl.find(fd)->second.setNick(c.target[0]);
+            welcome(fd, c);
+            this->cl.find(fd)->second.checkIfRegistred();
+            return (1);
+        }
     }
     else
     {
@@ -220,7 +231,7 @@ bool Server::irc_privmsg_notice(int fd, s_command &c)
         for(std::vector<std::string>::iterator it = c.target.begin();it != c.target.end();++it)
         {
             //check if  *it channel or user
-            std::string msg = ":"+this->cl.find(fd)->second.getNick()+"!"+this->cl.find(fd)->second.getUser()+"@"+this->getIp(fd)+" " + str_toupper(c.command) + " "+*it+" :";
+            std::string msg = ":"+this->cl.find(fd)->second.getNick()+"!~"+this->cl.find(fd)->second.getUser()+"@"+this->getIp(fd)+" " + str_toupper(c.command) + " "+*it+" :";
             int to = this->findClinet(*it);
             std::cout << "to :" << to << std::endl;
             if (to == -1)
