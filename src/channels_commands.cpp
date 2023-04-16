@@ -130,6 +130,10 @@ int Server::irc_join(int fd, s_command &c)
             Channels newChannel(*it ,pass);
             newChannel.addUser(this->cl.find(fd)->second);
             newChannel.addOp(this->cl.find(fd)->second);
+            std::vector<std::string> tmp;
+            std::string msg = ":" + this->getIp(fd) + ".ip " + "JOIN :" + *it + "\n";
+            send(fd, msg.c_str(), msg.length(), 0);
+            irc_names(fd, c);
             ch.push_back(newChannel);
         }
     }
@@ -380,7 +384,7 @@ bool Server::irc_names(int fd, s_command &c)
                     if (it2->getOps().find(fd)->second.getNick() == *it)
                         *it = "@" + *it;
                     else
-                        *it = "+" + *it;
+                        *it = *it;
                 }
             }
         }

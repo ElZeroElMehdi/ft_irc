@@ -94,7 +94,7 @@ IRCReply    replay_list( int code )
     //ERROR REPLIES
     rep.push_back((IRCReply){401, "ERR_NOSUCHNICK", "$1 :No such nick/channel", "Used to indicate the nickname parameter supplied to a command is currently unused."});
     rep.push_back((IRCReply){402, "ERR_NOSUCHSERVER", "<server name> :No such server", "Used to indicate the server name given currently doesn't exist."});
-    rep.push_back((IRCReply){403, "ERR_NOSUCHCHANNEL", "<channel name> :No such channel", "Used to indicate the given channel name is invalid."});
+    rep.push_back((IRCReply){403, "ERR_NOSUCHCHANNEL", "$1 :No such channel", "Used to indicate the given channel name is invalid."});
     rep.push_back((IRCReply){404, "ERR_CANNOTSENDTOCHAN", "<channel name> :Cannot send to channel", "Sent to a user who is either (a) not on a channel which is mode +n or (b) not a chanop (or mode +v) on a channel which has mode +m set and is trying to send a PRIVMSG message to that channel."});
     rep.push_back((IRCReply){405, "ERR_TOOMANYCHANNELS", "<channel name> :You have joined too many channels", "Sent to a user when they have joined the maximum number of allowed channels and they try to join another channel."});
     rep.push_back((IRCReply){406, "ERR_WASNOSUCHNICK", "<nickname> :There was no such nickname", "Returned by WHOWAS to indicate there is no history information for that nickname."});

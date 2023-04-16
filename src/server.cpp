@@ -24,7 +24,7 @@ void Server::createSocket()
 {
     this->fd_server = socket(AF_INET, SOCK_STREAM, 0);
     if (this->fd_server == -1)
-        throw std::runtime_error("creating socket faild!"); // strerror(errno)
+        throw std::runtime_error("creating socket faild!");
     int useval = 1;
     if (setsockopt(this->fd_server, SOL_SOCKET, SO_REUSEADDR, &useval, sizeof(useval)) == -1)
     {
@@ -56,7 +56,7 @@ void Server::listenConix()
     if (listen(this->fd_server, -1) == -1)
     {
         close(this->fd_server);
-        throw std::runtime_error("no connection comming!"); // strerror(errno)
+        throw std::runtime_error("no connection comming!");
     }
 }
 
