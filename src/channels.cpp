@@ -37,7 +37,9 @@ Channels::Channels(std::string name, std::string key)
     this->visibleSet = false;
 }
 
-Channels::~Channels() {}
+Channels::~Channels() {
+    // close all fd
+}
 
 // ============================ getters ============================
 

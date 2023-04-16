@@ -3,7 +3,7 @@
 IRCReply    replay_list( int code )
 {
     std::vector<IRCReply> rep;
-    //
+    
     rep.push_back((IRCReply){001, "RPL_WELCOME", "Welcome to the Internet Relay Network $1!~$2@$3", "n/a"});
     rep.push_back((IRCReply){002, "RPL_YOURHOST", "Your host is $1, running version $2", "n/a"});
     rep.push_back((IRCReply){003, "RPL_CREATED", "This server was created $1 UTC", "n/a"});
@@ -49,7 +49,7 @@ IRCReply    replay_list( int code )
     rep.push_back((IRCReply){324, "RPL_CHANNELMODEIS", "<channel> <mode> <mode params>", "n/a"});
     rep.push_back((IRCReply){331, "RPL_NOTOPIC", "$1 :No topic is set", "n/a"});
     rep.push_back((IRCReply){332, "RPL_TOPIC", "$1 :$2", "When sending a TOPIC message to determine the channel topic, one of two replies is sent. If the topic is set, RPL_TOPIC is sent back else RPL_NOTOPIC."});
-    rep.push_back((IRCReply){341, "RPL_INVITING", "<channel> <nick>", "Returned by the server to indicate that the attempted INVITE message was successful and is being passed onto the end client."});
+    rep.push_back((IRCReply){341, "RPL_INVITING", "$1 $2", "Returned by the server to indicate that the attempted INVITE message was successful and is being passed onto the end client."});
     rep.push_back((IRCReply){342, "RPL_SUMMONING", "<user> :Summoning user to IRC", "Returned by a server answering a SUMMON message to indicate that it is summoning that user."});
     rep.push_back((IRCReply){351, "RPL_VERSION", "<version>.<debuglevel> <server> :<comments>", "Reply by the server showing its version details. The <version> is the version of the software being used (including any patchlevel revisions) and the <debuglevel> is used to indicate if the server is running in 'debug mode'. The 'comments' field may contain any comments about the version or further version details."});
     rep.push_back((IRCReply){352, "RPL_WHOREPLY", "<channel> <user> <host> <server> <nick> <H|G>[*][@|+] :<hopcount> <real name>", "n/a"});
@@ -112,9 +112,9 @@ IRCReply    replay_list( int code )
     rep.push_back((IRCReply){432, "ERR_ERRONEUSNICKNAME", "$1 :Erroneus nickname", "Returned after receiving a NICK message which contains characters which do not fall in the defined set. See section x.x.x for details on valid nicknames."});
     rep.push_back((IRCReply){433, "ERR_NICKNAMEINUSE", "$1 :Nickname is already in use", "Returned when a NICK message is processed that results in an attempt to change to a currently existing nickname."});
     rep.push_back((IRCReply){436, "ERR_NICKCOLLISION", "<nick> :Nickname collision KILL", "Returned by a server to a client when it detects a nickname collision (registered of a NICK that already exists by another server)."});
-    rep.push_back((IRCReply){441, "ERR_USERNOTINCHANNEL", "<nick> <channel> :They aren't on that channel", "Returned by the server to indicate that the target user of the command is not on the given channel."});
-    rep.push_back((IRCReply){442, "ERR_NOTONCHANNEL", "<channel> :You're not on that channel", "Returned by the server whenever a client tries to perform a channel effecting command for which the client isn't a member."});
-    rep.push_back((IRCReply){443, "ERR_USERONCHANNEL", "<user> <channel> :is already on channel", "Returned when a client tries to invite a user to a channel they are already on."});
+    rep.push_back((IRCReply){441, "ERR_USERNOTINCHANNEL", "$1 $2 :They aren't on that channel", "Returned by the server to indicate that the target user of the command is not on the given channel."});
+    rep.push_back((IRCReply){442, "ERR_NOTONCHANNEL", "$1 :You're not on that channel", "Returned by the server whenever a client tries to perform a channel effecting command for which the client isn't a member."});
+    rep.push_back((IRCReply){443, "ERR_USERONCHANNEL", "$1 $2 :is already on channel", "Returned when a client tries to invite a user to a channel they are already on."});
     rep.push_back((IRCReply){444, "ERR_NOLOGIN", "<user> :User not logged in", "Returned by the summon after a SUMMON command for a user was unable to be performed since they were not logged in."});
     rep.push_back((IRCReply){445, "ERR_SUMMONDISABLED", ":SUMMON has been disabled", "Returned as a response to the SUMMON command. Must be returned by any server which does not implement it."});
     rep.push_back((IRCReply){446, "ERR_USERSDISABLED", ":USERS has been disabled", "Returned as a response to the USERS command. Must be returned by any server which does not implement it."});
@@ -131,7 +131,7 @@ IRCReply    replay_list( int code )
     rep.push_back((IRCReply){474, "ERR_BANNEDFROMCHAN", "<channel> :Cannot join channel (+b)", "n/a"});
     rep.push_back((IRCReply){475, "ERR_BADCHANNELKEY", "$1 :Cannot join channel (+k)", "n/a"});
     rep.push_back((IRCReply){481, "ERR_NOPRIVILEGES", ":Permission Denied- You're not an IRC operator", "Any command requiring operator privileges to operate must return this error to indicate the attempt was unsuccessful."});
-    rep.push_back((IRCReply){482, "ERR_CHANOPRIVSNEEDED", "<channel> :You're not channel operator", "Any command requiring 'chanop' privileges (such as MODE messages) must return this error if the client making the attempt is not a chanop on the specified channel."});
+    rep.push_back((IRCReply){482, "ERR_CHANOPRIVSNEEDED", "$1 :You're not channel operator", "Any command requiring 'chanop' privileges (such as MODE messages) must return this error if the client making the attempt is not a chanop on the specified channel."});
     rep.push_back((IRCReply){483, "ERR_CANTKILLSERVER", ":You cant kill a server!", "Any attempts to use the KILL command on a server are to be refused and this error returned directly to the client."});
     rep.push_back((IRCReply){491, "ERR_NOOPERHOST", ":No O-lines for your host", "If a client sends an OPER message and the server has not been configured to allow connections from the client's host as an operator, this error must be returned."});
     rep.push_back((IRCReply){501, "ERR_UMODEUNKNOWNFLAG", ":Unknown MODE flag", "Returned by the server to indicate that a MODE message was sent with a nickname parameter and that the a mode flag sent was not recognized."});
