@@ -70,6 +70,11 @@ class Server
         void save_user(std::vector<Channels>::iterator it, int fd, s_command c);
         //for new nranch
         
+        bool is_channel(std::string name);
+        Channels* getChannel(std::string name);
+        bool is_user_in_channel(std::string name, int fd);
+        bool is_user_in_server(std::string nickname);
+
         //welcome
         void welcome(int fd, s_command &c);
         //bonus
