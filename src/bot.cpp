@@ -23,14 +23,23 @@ static std::vector<std::string> help()
     msg.push_back ("USER <username> <hostname> <servername> <realname> : sets your username\r");
     msg.push_back ("PASS <password> : sets your password\r");
     msg.push_back ("QUIT [message]> disconnects you from the server\r");
-    msg.push_back ("JOIN <channel> : joins a channel\r");
-    msg.push_back ("PART <channel> : leaves a channel\r");
     msg.push_back ("PRIVMSG <channel> <message> : sends a message to a channel\r");
     msg.push_back ("NOTICE <channel> <message> : sends a notice to a channel\r");
     msg.push_back ("WHOIS <nickname> : gets information about a user\r");
+    msg.push_back ("PING <server> : pings a server\r");
+    msg.push_back ("PONG <server> : pongs a server\r");
+    
+    msg.push_back ("The following commands are available in channel:\r");
+    msg.push_back ("JOIN <channel> : joins a channel\r");
     msg.push_back ("NAMES <channel> : gets a list of users in a channel\r");
+    msg.push_back ("INVITE <nickname> <channel> : invites a user to a channel\r");
     msg.push_back ("LIST : gets a list of channels\r");
     msg.push_back ("TOPIC <channel> : gets the topic of a channel\r");
+    msg.push_back ("MODE <channel> : gets the mode of a channel\r");
+    msg.push_back ("KICK <channel> <nickname> : kicks a user from a channel\r");
+    msg.push_back ("PART <channel> : leaves a channel\r");
+
+
     msg.push_back ("BOT <command> : sends a command to the bot\r");
     msg.push_back ("The following commands are available in bot>\r");
     msg.push_back ("TIME : gets the current time\r");
@@ -66,9 +75,13 @@ static std::string adhanCity(std::string city)
         // Perform the HTTP request.
         CURLcode result = curl_easy_perform(curl);
         // Check for any errors.
-        if (result != CURLE_OK)
-            value = "no such city or bad connection with voice.mediaplus.ma";
-        else 
+        long http_response_code = 0;
+        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_response_code);
+        if (result == CURLE_OK && http_response_code == 404)
+            value = "Resource not found" ;
+        else if (result != CURLE_OK)
+            value = "Error: " + std::string(curl_easy_strerror(result));
+        else
             value = response;
         curl_easy_cleanup(curl);
     }

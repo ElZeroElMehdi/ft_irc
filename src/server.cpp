@@ -208,8 +208,6 @@ int Server::command_routes(int fd, s_command &c)
             return this->irc_kick(fd, c);
         if (info.name == "NAMES")
             return this->irc_names(fd, c);
-        if (info.name == "BAN")
-            return this->irc_ban(fd, c);
         if (info.name == "LIST")
             return this->irc_list(fd, c);
         if (info.name == "PONG")
@@ -237,7 +235,7 @@ std::string Server::showReply(int code, int fd, std::vector<std::string> &vars)
     }
     else if (code == 2)
     {
-        s = ip + ", 2.0";
+        s = ip + ", v2.0";
         str = splitString(s, ",");
         s = get_replay(code, str).msg;
         str.clear();
@@ -252,7 +250,7 @@ std::string Server::showReply(int code, int fd, std::vector<std::string> &vars)
     {
         str.push_back(Nick);
         str.push_back(ip);
-        str.push_back("2.0");
+        str.push_back("v2.0");
         s = get_replay(code, str).msg;
         str.clear();
     }
