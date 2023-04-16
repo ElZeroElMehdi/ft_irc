@@ -1,6 +1,6 @@
 #include "client.hpp"
 
-Clients::Clients(int fd) : client_fd(fd)
+Clients::Clients(int fd) : client_fd(fd), status(0), isRegistred(false)
 {
     this->setRegistred(false);
     this->nick = "";
@@ -50,7 +50,7 @@ std::string Clients::getNick() const
     return this->nick;
 }
 
-Clients::Clients(std::string _user, std::string _nick, int _fd)
+Clients::Clients(std::string _user, std::string _nick, int _fd):status(0)
 {
     if (!_user.empty())
         this->setUser(_user);
@@ -99,6 +99,21 @@ void Clients::setIp(std::string ip)
 std::string Clients::getIp() const
 {
     return this->ip;
+}
+
+void Clients::setPort(unsigned int port)
+{
+    this->port = port;
+}
+
+unsigned int Clients::getPort() const
+{
+    return this->port;
+}
+
+bool Clients::getStatus() const
+{
+    return this->status;
 }
 
 void Clients::setPass(std::string pass)

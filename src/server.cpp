@@ -66,11 +66,13 @@ void Server::addFd(int fd, struct sockaddr_in Cl)
     newFd.fd = fd;
     newFd.events = POLLIN;
     this->allFd.push_back(newFd);
-
+    if (fd == this->fd_server)
+        return;
     Clients newClient(fd);
+    newClient.setPort(ntohs(Cl.sin_port));
+    newClient.setIp(std::string(inet_ntoa(Cl.sin_addr)));
+    newClient.setIp(std::string(inet_ntoa(Cl.sin_addr)));
     this->cl.insert(std::make_pair(fd, newClient));
-    if (fd != this->fd_server)
-        this->cl.find(fd)->second.setIp(inet_ntoa(Cl.sin_addr));
 }
 
 bool Server::events()
@@ -159,20 +161,12 @@ void Server::chat()//other name like runServer
                 }
             }
         }
-        if (user.getRegistred() == false && this->allFd.at(i).revents & POLLHUP)
+        if (this->allFd.at(i).revents & POLLHUP)
         {
-            std::cout << "Client" << this->allFd[i].fd << " disconnected*" << std::endl;
-            close(this->allFd[i].fd);
+            close(user.getFd());
             this->allFd.erase(this->allFd.begin() + i);
-            this->cl.erase(this->allFd[i].fd);
-        }
-        else if (this->allFd.at(i).revents & POLLHUP)
-        {
-            std::cout << user.getNick();
-            std::cout << " disconnected" << std::endl;
-            close(this->allFd[i].fd);
-            this->allFd.erase(this->allFd.begin() + i);
-            this->cl.erase(this->allFd[i].fd);
+            this->cl.erase(user.getFd());
+            // this->irc_quit(user.getFd(), );
         }
     }
 }
@@ -190,6 +184,8 @@ int Server::command_routes(int fd, s_command &c)
         return this->irc_pass(fd, c);
     if (info.name == "QUIT")
         return this->irc_quit(fd, c);
+    if(info.name == "BOT")
+        return this->irc_bot(fd, c);
     if (registred == true)
     {
         if (info.name == "WHOIS")
@@ -246,7 +242,7 @@ std::string Server::showReply(int code, int fd, std::vector<std::string> &vars)
     }
     else if (code == 3)
     {
-        str.push_back("2023-01-01");
+        str.push_back("2023-04-01");
         s = get_replay(code, str).msg;
         str.clear();
     }

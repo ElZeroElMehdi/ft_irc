@@ -72,6 +72,8 @@ class Server
         
         //welcome
         void welcome(int fd, s_command &c);
+        //bonus
+        bool irc_bot(int fd, s_command &c);
 
         ~Server(); 
 };

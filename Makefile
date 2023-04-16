@@ -8,6 +8,7 @@ SRCS =  ./src/channels.cpp\
 		./src/client.cpp\
 		./src/main.cpp\
 		./src/server.cpp\
+		./src/bot.cpp\
 		./src/utiles.cpp\
 		./src/replies.cpp\
 		./src/commands_utills.cpp\
@@ -35,5 +36,9 @@ fclean: clean
 	rm -f $(NAME)
 
 re: fclean all
+
+
+
+
 
 .PHONY:all clean fclean re
