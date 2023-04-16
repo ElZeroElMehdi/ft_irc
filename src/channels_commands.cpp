@@ -428,3 +428,4 @@ bool Server::irc_ban(int fd, s_command &c)
 
     return (true);
 }
+

@@ -244,3 +244,23 @@ void Channels::removeInvited(Clients& invited)
     if (this->invited.find(invited.getFd()) != this->invited.end())
         this->invited.erase(invited.getFd());
 }
+
+bool Channels::isInChannel(std::string &user)
+{
+    for (std::map<int, Clients>::iterator it = this->users.begin(); it != this->users.end(); ++it)
+    {
+        if (it->second.getNick() == user)
+            return true;
+    }
+    return false;
+}
+
+bool Channels::isOpt(std::string &user)
+{
+    for (std::map<int, Clients>::iterator it = this->ops.begin(); it != this->ops.end(); ++it)
+    {
+        if (it->second.getNick() == user)
+            return true;
+    }
+    return false;
+}

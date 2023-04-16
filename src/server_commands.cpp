@@ -32,6 +32,15 @@ int Server::irc_user(int fd, s_command &c)
         send(fd, error.c_str(), error.length(), 0);
         return (0);
     }
+    if (c.target[0] == "*")
+    {
+        std::vector<std::string> tmp;
+        tmp.push_back("*");
+        tmp.push_back("USER");
+        std::string error = this->showReply(468, fd, tmp);
+        send(fd, error.c_str(), error.length(), 0);
+        return (0);
+    }
     this->cl.find(fd)->second.setUser(c.target[0]);
     int pos = c.second_pram.find(" :");
     if(pos == -1)//std::string::npos
@@ -143,7 +152,7 @@ bool Server::irc_whois(int fd, s_command &c)
     std::string error;
     if (c.target.size() == 0)
     {
-        error = this->showReply(431, this->fd_server, tmp);
+        error = this->showReply(431, fd, tmp);
         send(fd, error.c_str(), error.length(), 0);
         return 0;
     }
@@ -156,6 +165,8 @@ bool Server::irc_whois(int fd, s_command &c)
             error = this->showReply(401, fd, tmp);
             send(fd, error.c_str(), error.length(), 0);
             error.clear();
+            tmp.clear();
+            tmp.push_back(nick);
             error = this->showReply(318, fd, tmp);
             send(fd, error.c_str(), error.length(), 0);
             error.clear();
@@ -172,14 +183,28 @@ bool Server::irc_whois(int fd, s_command &c)
             send(fd, error.c_str(), error.length(), 0);
             error.clear();
             tmp.clear();
+            std::string Chs = searchChannelsByUser(nick);
+            std::cout << "Chs: " << Chs << std::endl;
+            if (!Chs.empty())
+            {
+                tmp.push_back(nick);
+                tmp.push_back(Chs);
+                error = this->showReply(319, fd, tmp);
+                send(fd, error.c_str(), error.length(), 0);
+                tmp.clear();
+            }
             tmp.push_back(nick);
             tmp.push_back(this->getIp(this->fd_server));
-            tmp.push_back("ircserver created by eelmoham oakoudad and oalaoui- students at 1337 school");
+            tmp.push_back("ircServer created by oakoudad eelmoham and oalaoui- students at 1337 school");
             error = this->showReply(312, fd, tmp);
             send(fd, error.c_str(), error.length(), 0);
             error.clear();
         }
     }
+    tmp.clear();
+    tmp.push_back(*(c.target.begin()));
+    error = this->showReply(318, fd, tmp);
+    send(fd, error.c_str(), error.length(), 0);
     return 1;
 }
 
@@ -240,9 +265,7 @@ bool Server::irc_privmsg_notice(int fd, s_command &c)
                     msg += c.second_pram.substr(1) + "\n";
                 else
                     msg += c.second_pram + "\n";
-            }
-            std::cout << "msg :" << msg << std::endl;
-            
+            }            
             if ((*it)[0] == '#')
             {
                 sendToChannel(*it, msg);

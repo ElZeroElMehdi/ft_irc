@@ -23,6 +23,7 @@ class Server
         // seters
         void setPort(int pr);
         int getPort() const;
+        std::string searchChannelsByUser(std::string &user);
         bool isPass(std::string pass);
         // methods
         void createSocket();

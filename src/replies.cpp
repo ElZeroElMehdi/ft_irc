@@ -7,7 +7,7 @@ IRCReply    replay_list( int code )
     rep.push_back((IRCReply){001, "RPL_WELCOME", "Welcome to the Internet Relay Network $1!~$2@$3", "n/a"});
     rep.push_back((IRCReply){002, "RPL_YOURHOST", "Your host is $1, running version $2", "n/a"});
     rep.push_back((IRCReply){003, "RPL_CREATED", "This server was created $1 UTC", "n/a"});
-    rep.push_back((IRCReply){004, "RPL_MYINFO", "$1 $2 $3 $4", "n/a"});
+    rep.push_back((IRCReply){004, "RPL_MYINFO", "$1 $2 $3", "n/a"});
     rep.push_back((IRCReply){005, "RPL_BOUNCE", "Try server $1, port $2", "Sent by the server to a user to suggest an alternative server.  This is often used when the connection is refused because the server is already full."});
 
     //RESERVED NUMERALS
@@ -41,8 +41,8 @@ IRCReply    replay_list( int code )
     rep.push_back((IRCReply){313, "RPL_WHOISOPERATOR", "<nick> :is an IRC operator", "n/a"});
     rep.push_back((IRCReply){314, "RPL_WHOWASUSER", "<nick> <user> <host> * :<real name>", "n/a"});
     rep.push_back((IRCReply){317, "RPL_WHOISIDLE", "<nick> <integer> :seconds idle", "n/a"});
-    rep.push_back((IRCReply){318, "RPL_ENDOFWHOIS", "<nick> :End of /WHOIS list", "n/a"});
-    rep.push_back((IRCReply){319, "RPL_WHOISCHANNELS", "<nick> :{[@|+]<channel><space>}", "Replies 311 - 313, 317 - 319 are all replies generated in response to a WHOIS message. Given that there are enough parameters present, the answering server must either formulate a reply out of the above numerics (if the query nick is found) or return an error reply. The '*' in RPL_WHOISUSER is there as the literal character and not as a wild card. For each reply set, only RPL_WHOISCHANNELS may appear more than once (for long lists of channel names). The '@' and '+' characters next to the channel name indicate whether a client is a channel operator or has been granted permission to speak on a moderated channel. The RPL_ENDOFWHOIS reply is used to mark the end of processing a WHOIS message."});
+    rep.push_back((IRCReply){318, "RPL_ENDOFWHOIS", "$1 :End of /WHOIS list", "n/a"});
+    rep.push_back((IRCReply){319, "RPL_WHOISCHANNELS", "$1 :$2", "Replies 311 - 313, 317 - 319 are all replies generated in response to a WHOIS message. Given that there are enough parameters present, the answering server must either formulate a reply out of the above numerics (if the query nick is found) or return an error reply. The '*' in RPL_WHOISUSER is there as the literal character and not as a wild card. For each reply set, only RPL_WHOISCHANNELS may appear more than once (for long lists of channel names). The '@' and '+' characters next to the channel name indicate whether a client is a channel operator or has been granted permission to speak on a moderated channel. The RPL_ENDOFWHOIS reply is used to mark the end of processing a WHOIS message."});
     rep.push_back((IRCReply){321, "RPL_LISTSTART", "Channel :Users Name", "n/a"});
     rep.push_back((IRCReply){322, "RPL_LIST", "$1 $2 :$3", "n/a"});
     rep.push_back((IRCReply){323, "RPL_LISTEND", ":End of /LIST", "Replies RPL_LISTSTART, RPL_LIST, RPL_LISTEND mark the start, actual replies with data and end of the server's response to a LIST command. If there are no channels available to return, only the start and end reply must be sent."});
@@ -125,6 +125,7 @@ IRCReply    replay_list( int code )
     rep.push_back((IRCReply){464, "ERR_PASSWDMISMATCH", ":Password incorrect", "Returned to indicate a failed attempt at registering a connection for which a password was required and was either not given or incorrect."});
     rep.push_back((IRCReply){465, "ERR_YOUREBANNEDCREEP", ":You are banned from this server", "Returned after an attempt to connect and register yourself with a server which has been setup to explicitly deny connections to you."});
     rep.push_back((IRCReply){467, "ERR_KEYSET", "<channel> :Channel key already set", "n/a"});
+    rep.push_back((IRCReply){468, "RPL_INVALIDUSER", "$1 $2 :Your username is not valid", "n/a"});
     rep.push_back((IRCReply){471, "ERR_CHANNELISFULL", "<channel> :Cannot join channel (+l)", "n/a"});
     rep.push_back((IRCReply){472, "ERR_UNKNOWNMODE", "<char> :is unknown mode char to me", "n/a"});
     rep.push_back((IRCReply){473, "ERR_INVITEONLYCHAN", "<channel> :Cannot join channel (+i)", "n/a"});

@@ -56,6 +56,9 @@ class Channels
         bool getInviteSet() const;
         bool getOutsideSet() const;
 
+        bool isInChannel(std::string &user);
+        bool isOpt(std::string &user);
+
         void setName(std::string name);
         void setTimestamp(unsigned long timestamp);
         void setTopic(std::string topic);

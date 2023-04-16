@@ -248,23 +248,9 @@ std::string Server::showReply(int code, int fd, std::vector<std::string> &vars)
     }
     else if (code == 4)
     {
+        str.push_back(Nick);
         str.push_back(ip);
         str.push_back("2.0");
-        str.push_back("H+");
-        str.push_back("M+");
-        s = get_replay(code, str).msg;
-        str.clear();
-    }
-    else if (code == 5)
-    {
-        str.push_back(ip);
-        str.push_back(ft_rep_code(this->getPort()));
-        s = get_replay(code, str).msg;
-        str.clear();
-    }
-    else if (code == 5)
-    {
-        str.push_back(ip);
         s = get_replay(code, str).msg;
         str.clear();
     }
@@ -290,3 +276,20 @@ bool Server::isPass(std::string pass)
     return false;
 }
 
+
+std::string Server::searchChannelsByUser(std::string &user)
+{
+    std::string channels = "";
+    for (std::vector<Channels>::iterator it = this->ch.begin(); it != ch.end(); ++it)
+    {
+        std::cout << "CH : "<< it->getName() << std::endl;
+        if (it->isInChannel(user))
+        {
+            if (it->isOpt(user))
+                channels += "@" + it->getName() + " ";
+            else
+                channels += it->getName() + " ";
+        }
+    }
+    return channels;
+}
