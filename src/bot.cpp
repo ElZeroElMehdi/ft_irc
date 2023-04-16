@@ -178,9 +178,11 @@ bool Server::irc_bot(int fd, s_command &c)
 
 bool Server::irc_send(int fd, s_command &c)
 {
+    (void)fd;
     if (c.target.size() == 0 || c.first_pram.size() == 0 || c.second_pram.size() == 0)
     {
         
         return (false);
     }
+    return true;
 }
