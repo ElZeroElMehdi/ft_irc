@@ -4,7 +4,7 @@
 Server::Server(const char *pt, const char *password)
 {
     int por = std::atoi(pt);
-    if (por < 1024 || por > 65536)
+    if (por < 1024 || por > 65535)
         throw std::runtime_error("wrrong port number!");
     this->port = por;
     this->pw = password;
@@ -231,7 +231,7 @@ std::string Server::showReply(int code, int fd, std::vector<std::string> &vars)
     std::vector<std::string> str;
     if (code == 1)
     {
-        s = Nick + "," + User + "," + ip;
+        s = Nick + "," + User + "," + this->cl.find(fd)->second.getHostName().substr(0, this->cl.find(fd)->second.getHostName().length() - 3);
         str = splitString(s, ",");
         s = get_replay(code, str).msg;
         str.clear();

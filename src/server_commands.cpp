@@ -14,6 +14,7 @@ void Server::welcome(int fd, s_command &c)
         send(fd, msg.c_str(), msg.length(), 0);
         msg = showReply(4, fd, c.target);
         send(fd, msg.c_str(), msg.length(), 0);
+        
     }
 }
 
