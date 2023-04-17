@@ -25,7 +25,8 @@ struct s_command
     std::string                 second_pram;
 };
 
-struct IRCCommand {
+struct IRCCommand
+{
     std::string name;
     bool        need_registred;
 };

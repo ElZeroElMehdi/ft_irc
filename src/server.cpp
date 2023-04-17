@@ -98,8 +98,6 @@ bool Server::events()
         }
 
         this->addFd(newClient, ClinetAddr);
-        std::string s = ":"+this->getIp(this->fd_server)+" NOTICE AUTH :*** Looking up your hostname...\n:"+this->getIp(this->fd_server)+" NOTICE AUTH :*** Found your hostname\n";
-        send(newClient, s.c_str(), s.length(), 0);
     }
     return true;
 }
@@ -184,7 +182,7 @@ int Server::command_routes(int fd, s_command &c)
     if (info.name == "NICK")
         return this->irc_nick(fd, c);
     if (info.name == "USER")
-        return this->irc_user(fd, c);//should I check if the user is re
+        return this->irc_user(fd, c);
     if (info.name == "PASS")
         return this->irc_pass(fd, c);
     if (info.name == "QUIT")
