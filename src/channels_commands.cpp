@@ -37,6 +37,8 @@ void Server::save_user(std::vector<Channels>::iterator it, int fd, s_command c)
 {
     (void)c;
     it->addUser(this->cl.find(fd)->second);
+    if (it->getUsers()->size() == 1)
+        it->addOp(this->cl.find(fd)->second);
     std::vector<std::string> tmp;
     std::string msg = ":" + this->cl.find(fd)->second.getHostName(this->getIp(fd)) + " JOIN :" + it->getName() + "\n";
     sendToChannel(it->getName(), msg, 0, fd);
@@ -407,12 +409,13 @@ bool Server::irc_invite(int fd, s_command &c)
                     std::cout << "channel_str111: " << channel_str << std::endl;
                     channel->addInvited(this->cl.find(this->findClinet(c.target[0]))->second);
                     params.clear();
-                    params.push_back(this->cl.find(this->findClinet(c.target[0]))->second.getNick());
+                    params.push_back(this->cl.find(fd)->second.getNick());
                     params.push_back(c.target[0]);
                     params.push_back(channel_str);
-                    msg = ":"+this->cl.find(fd)->second.getNick()+"!~"+this->cl.find(fd)->second.getUser()+"@"+this->getIp(fd) + ".ip " + "INVITE " + c.target[0] + " " + channel_str + "\n";
-                    sendToChannel(channel_str, msg, 0, fd);
                     msg = showReply(341, fd, params);
+                    send(fd, msg.c_str(), msg.size(), 0);
+                    msg = ":"+this->cl.find(fd)->second.getNick()+"!~"+this->cl.find(fd)->second.getUser()+"@"+this->getIp(fd) + ".ip " + "INVITE " + c.target[0] + " " + channel_str + "\n";
+                    // sendToChannel(channel_str, msg, 0, 0);
                     send(this->findClinet(c.target[0]), msg.c_str(), msg.size(), 0);
                     return (true);
                 }

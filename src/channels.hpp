@@ -83,6 +83,7 @@ class Channels
         void removeOp(Clients& op);
         void removeModerator(Clients& moderator);
         void removeInvited(Clients& invited);
+        void rm(int fd);
 
 };
 

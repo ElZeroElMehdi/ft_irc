@@ -49,7 +49,7 @@ IRCReply    replay_list( int code )
     rep.push_back((IRCReply){324, "RPL_CHANNELMODEIS", "$1 $2 $3", "n/a"});
     rep.push_back((IRCReply){331, "RPL_NOTOPIC", "$1 :No topic is set", "n/a"});
     rep.push_back((IRCReply){332, "RPL_TOPIC", "$1 :$2", "When sending a TOPIC message to determine the channel topic, one of two replies is sent. If the topic is set, RPL_TOPIC is sent back else RPL_NOTOPIC."});
-    rep.push_back((IRCReply){341, "RPL_INVITING", "$1 $2", "Returned by the server to indicate that the attempted INVITE message was successful and is being passed onto the end client."});
+    rep.push_back((IRCReply){341, "RPL_INVITING", "$1 $2 $3", "Returned by the server to indicate that the attempted INVITE message was successful and is being passed onto the end client."});
     rep.push_back((IRCReply){342, "RPL_SUMMONING", "<user> :Summoning user to IRC", "Returned by a server answering a SUMMON message to indicate that it is summoning that user."});
     rep.push_back((IRCReply){351, "RPL_VERSION", "<version>.<debuglevel> <server> :<comments>", "Reply by the server showing its version details. The <version> is the version of the software being used (including any patchlevel revisions) and the <debuglevel> is used to indicate if the server is running in 'debug mode'. The 'comments' field may contain any comments about the version or further version details."});
     rep.push_back((IRCReply){352, "RPL_WHOREPLY", "<channel> <user> <host> <server> <nick> <H|G>[*][@|+] :<hopcount> <real name>", "n/a"});

@@ -269,3 +269,23 @@ bool Channels::isOpt(std::string &user)
     }
     return false;
 }
+
+void Channels::rm(int fd)
+{
+    for (std::map<int, Clients>::iterator it = this->users.begin(); it != this->users.end(); ++it)
+    {
+        if (it->first == fd)
+        {
+            this->users.erase(it);
+            break;
+        }
+    }
+    for (std::map<int, Clients>::iterator it = this->ops.begin(); it != this->ops.end(); ++it)
+    {
+        if (it->first == fd)
+        {
+            this->ops.erase(it);
+            break;
+        }
+    }
+}
