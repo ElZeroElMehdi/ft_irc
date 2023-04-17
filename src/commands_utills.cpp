@@ -28,24 +28,25 @@ std::vector<IRCCommand> commands_list()
 {
     static std::vector<IRCCommand> rep;
 
-    rep.push_back((IRCCommand){"NICK", 0});
-    rep.push_back((IRCCommand){"USER", 0});
-    rep.push_back((IRCCommand){"PASS", 0});
-    rep.push_back((IRCCommand){"QUIT", 0});
-    rep.push_back((IRCCommand){"BOT", 0});
+    rep.push_back((IRCCommand){"NICK",      1});
+    rep.push_back((IRCCommand){"USER",      1});
+    rep.push_back((IRCCommand){"PASS",      1});
+    rep.push_back((IRCCommand){"QUIT",      1});
+    rep.push_back((IRCCommand){"BOT",       1});
+
     // need to be registred
-    rep.push_back((IRCCommand){"JOIN", 1});
-    rep.push_back((IRCCommand){"PART", 1});
-    rep.push_back((IRCCommand){"PRIVMSG", 1});
-    rep.push_back((IRCCommand){"NOTICE", 1});
-    rep.push_back((IRCCommand){"WHOIS", 1});
-    rep.push_back((IRCCommand){"NAMES", 1});
-    rep.push_back((IRCCommand){"LIST", 1});
-    rep.push_back((IRCCommand){"TOPIC", 1});
-    rep.push_back((IRCCommand){"PONG", 1});
-    rep.push_back((IRCCommand){"PING", 1});
-    rep.push_back((IRCCommand){"INVITE", 1});
-    rep.push_back((IRCCommand){"KICK", 1});
+    rep.push_back((IRCCommand){"JOIN",      0});
+    rep.push_back((IRCCommand){"PART",      0});
+    rep.push_back((IRCCommand){"PRIVMSG",   0});
+    rep.push_back((IRCCommand){"NOTICE",    0});
+    rep.push_back((IRCCommand){"WHOIS",     0});
+    rep.push_back((IRCCommand){"NAMES",     0});
+    rep.push_back((IRCCommand){"LIST",      0});
+    rep.push_back((IRCCommand){"TOPIC",     0});
+    rep.push_back((IRCCommand){"PONG",      0});
+    rep.push_back((IRCCommand){"PING",      0});
+    rep.push_back((IRCCommand){"INVITE",    0});
+    rep.push_back((IRCCommand){"KICK",      0});
     return rep;
 }
 
