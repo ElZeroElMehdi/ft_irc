@@ -16,7 +16,7 @@ bool Server::is_user_in_channel(std::string name, int fd)
     Channels *ch = getChannel(name);
     if (ch == NULL)
         return false;
-    std::map<int, Clients> tmp = ch->getUsers();
+    std::map<int, Clients> tmp = *ch->getUsers();
     for (std::map<int, Clients>::iterator it = tmp.begin(); it != tmp.end(); ++it)
     {
         if (it->first == fd)
@@ -56,7 +56,7 @@ bool Server::find_channel(std::string &name, int fd, s_command c)
     {
         if (it->getName() == name)
         {
-            if (it->getUsers().find(fd)->first == fd)
+            if (it->getUsers()->find(fd)->first == fd)
                 return true;
             if (it->getInviteSet())
             {
@@ -69,7 +69,7 @@ bool Server::find_channel(std::string &name, int fd, s_command c)
                         {
                             if (it->getLimitSet())
                             {
-                                if (it->getUsers().size() < (unsigned long)it->getLimit())
+                                if (it->getUsers()->size() < (unsigned long)it->getLimit())
                                     save_user(it, fd, c);
                                 else
                                 {
@@ -127,7 +127,7 @@ bool Server::find_channel(std::string &name, int fd, s_command c)
 void Server::sendToChannel(std::string channel, std::string message, int type, int fd)
 {
     Channels *tmp = getChannel(channel);
-    std::map<int, Clients> users = tmp->getUsers();
+    std::map<int, Clients> users = *tmp->getUsers();
     for (std::map<int, Clients>::iterator it = users.begin(); it != users.end(); ++it)
     {
         if (type == 1 && it->first == fd)
@@ -162,7 +162,7 @@ void Server::send_msg_to_Channel(std::string channel, std::string message, int f
         if (tmp->getOutsideSet())
         {
             std::cout << "INVITE" << tmp->getInvited().find(fd)->first << " " << fd << std::endl;
-            if (tmp->getUsers().find(fd)->first == fd)
+            if (tmp->getUsers()->find(fd)->first == fd)
                 sendToChannel(channel, message, 1, fd);
             else
             {
@@ -251,7 +251,7 @@ bool Server::irc_part(int fd, s_command &c)
         else
         {
             Channels *channel = getChannel(*it);
-            if(channel->getUsers().find(fd)->first != fd)
+            if(channel->getUsers()->find(fd)->first != fd)
             {
                 std::vector<std::string> params;
                 params.push_back(*it);
@@ -260,13 +260,13 @@ bool Server::irc_part(int fd, s_command &c)
             }
             else
             {
-                channel->removeUser(channel->getUsers().find(fd)->second);
-                if (channel->getOps().find(fd) != channel->getOps().end())
-                    channel->removeOp(channel->getOps().find(fd)->second);
+                channel->removeUser(channel->getUsers()->find(fd)->second);
+                if (channel->getOps()->find(fd) != channel->getOps()->end())
+                    channel->removeOp(channel->getOps()->find(fd)->second);
                 std::string msg = ":"+this->cl.find(fd)->second.getNick()+"!~"+this->cl.find(fd)->second.getUser()+"@"+this->getIp(fd) + ".ip " + "PART " + *it + "\n";
                 send(fd, msg.c_str(), msg.length(), 0);
                 sendToChannel(*it, msg, 0, fd);
-                if (channel->getUsers().size() == 0)
+                if (channel->getUsers()->size() == 0)
                 {
                     for (std::vector<Channels>::iterator it2 = this->ch.begin(); it2 != this->ch.end(); ++it2)
                     {
@@ -309,7 +309,7 @@ bool Server::irc_topic(int fd, s_command &c)
         Channels *channel = getChannel(c.target[0]);
         if (channel->getTopicSet() && (!c.first_pram.empty() || !c.second_pram.empty()))
         {
-            if (channel->getOps().find(fd)->first != fd)
+            if (channel->getOps()->find(fd)->first != fd)
             {
                 std::vector<std::string> params;
                 params.push_back(c.target[0]);
@@ -326,7 +326,7 @@ bool Server::irc_topic(int fd, s_command &c)
                 std::vector<std::string> params;
                 params.push_back(c.target[0]);
                 params.push_back(channel->getTopic());
-                std::string msg = showReply(332, fd, params);
+                std::string msg = ":"+this->cl.find(fd)->second.getNick()+"!~"+this->cl.find(fd)->second.getUser()+"@"+this->getIp(fd) + ".ip " + "TOPIC " + c.target[0] + " :" + channel->getTopic() + "\n";
                 sendToChannel(c.target[0], msg, 0, fd);
                 return (true);
             }
@@ -402,14 +402,15 @@ bool Server::irc_invite(int fd, s_command &c)
             }
             else
             {
-                if (channel->getOps().find(fd)->first == fd)
+                if (channel->getOps()->find(fd)->first == fd)
                 {
                     std::cout << "channel_str111: " << channel_str << std::endl;
                     channel->addInvited(this->cl.find(this->findClinet(c.target[0]))->second);
                     params.clear();
-                    params.push_back(channel_str);
+                    params.push_back(this->cl.find(this->findClinet(c.target[0]))->second.getNick());
                     params.push_back(c.target[0]);
-                    msg = showReply(341, fd, params);
+                    params.push_back(channel_str);
+                    msg = ":"+this->cl.find(fd)->second.getNick()+"!~"+this->cl.find(fd)->second.getUser()+"@"+this->getIp(fd) + ".ip " + "INVITE " + c.target[0] + " " + channel_str + "\n";
                     sendToChannel(channel_str, msg, 0, fd);
                     msg = showReply(341, fd, params);
                     send(this->findClinet(c.target[0]), msg.c_str(), msg.size(), 0);
@@ -461,7 +462,7 @@ bool Server::irc_mode(int fd, s_command &c)
     if(is_channel(c.target[0]))
     {
         Channels *channel = getChannel(c.target[0]);
-        if (channel->getOps().find(fd)->first == fd)
+        if (channel->getOps()->find(fd)->first == fd)
         {
             if (c.first_pram.size() > 1)
             {
@@ -668,14 +669,14 @@ bool Server::irc_kick(int fd, s_command &c)
             std::cout << "ch ; " << *it << " user ; " << *it2 << is_user_in_channel(*it, fd) << std::endl;
             if (is_user_in_channel(*it, fd))
             {
-                if (channel->getOps().find(fd)->first == fd)
+                if (channel->getOps()->find(fd)->first == fd)
                 {
                     if (is_user_in_channel(*it, this->findClinet(*it2)))
                     {
                         params.clear();
                         params.push_back(*it);
                         params.push_back(*it2);
-                        msg = showReply(341, fd, params);
+                        msg = ":"+this->cl.find(fd)->second.getNick()+"!~"+this->cl.find(fd)->second.getUser()+"@"+this->getIp(fd) + ".ip " + "KICK " + *it + " " + *it2 + " :" + c.second_pram + "\n";
                         sendToChannel(*it, msg, 0, fd);
                         channel->removeUser(this->cl.find(this->findClinet(*it2))->second);
                     }
@@ -733,9 +734,9 @@ bool Server::irc_names(int fd, const s_command &c)
     {
         if (it->getName() == c.target[0])
         {
-            if (it->getUsers().find(fd)->first == fd)
+            if (it->getUsers()->find(fd)->first == fd)
             {
-                std::map<int, Clients> users = it->getUsers();
+                std::map<int, Clients> users = *it->getUsers();
                 for (std::map<int, Clients>::iterator it2 = users.begin(); it2 != users.end(); ++it2)
                     params.push_back(it2->second.getNick());
             }
@@ -766,7 +767,7 @@ bool Server::irc_names(int fd, const s_command &c)
             {
                 if (it2->getName() == c.target[0])
                 {
-                    std::map<int, Clients> users = it2->getOps();
+                    std::map<int, Clients> users = *it2->getOps();
                     for (std::map<int, Clients>::iterator it3 = users.begin(); it3 != users.end(); ++it3)
                         if (it3->second.getNick() == *it)
                             *it = "@" + *it;

@@ -42,8 +42,8 @@ class Channels
         std::string getMode() const;
         std::string getKey() const;
 
-        std::map<int, Clients> getUsers() const;
-        std::map<int, Clients> getOps() const;
+        std::map<int, Clients> *getUsers();
+        std::map<int, Clients> *getOps();
         std::map<int, Clients> getModerators() const;
         std::map<int, Clients> getInvited() const;
 
@@ -74,8 +74,8 @@ class Channels
         void setVisibleSet(bool visibleSet);
         void addmode(std::string mode);
 
-        void addUser(Clients &user);
-        void addOp(Clients &op);
+        void addUser(Clients user);
+        void addOp(Clients op);
         void addModerator(Clients &moderator);
         void addInvited(Clients &invited);
 
