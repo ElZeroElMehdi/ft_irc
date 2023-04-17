@@ -12,8 +12,6 @@ void Server::welcome(int fd, s_command &c)
         send(fd, msg.c_str(), msg.length(), 0);
         msg = showReply(3, fd, c.target);
         send(fd, msg.c_str(), msg.length(), 0);
-        msg = showReply(4, fd, c.target);
-        send(fd, msg.c_str(), msg.length(), 0);
     }
 }
 
@@ -62,7 +60,6 @@ int Server::irc_user(int fd, s_command &c)
 
 static bool include(char needle, std::string stack)
 {
-    std::cout << "needle: " << stack << std::endl;
     for (std::string::const_iterator it = stack.begin(); it != stack.end(); ++it)
     {
         if (*it == needle)
