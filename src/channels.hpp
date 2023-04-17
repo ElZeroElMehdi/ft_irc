@@ -72,6 +72,7 @@ class Channels
         void setOutsideSet(bool outsideSet);
         void setLimitSet(bool limitSet);
         void setVisibleSet(bool visibleSet);
+        void addmode(std::string mode);
 
         void addUser(Clients &user);
         void addOp(Clients &op);

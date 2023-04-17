@@ -39,7 +39,7 @@ void Server::save_user(std::vector<Channels>::iterator it, int fd, s_command c)
     it->addUser(this->cl.find(fd)->second);
     std::vector<std::string> tmp;
     std::string msg = ":"+this->cl.find(fd)->second.getNick()+"!~"+this->cl.find(fd)->second.getUser()+"@"+this->getIp(fd) + ".ip " + "JOIN :" + it->getName() + "\n";
-    sendToChannel(it->getName(), msg);
+    sendToChannel(it->getName(), msg, 0, fd);
     tmp.push_back(it->getName());
     tmp.push_back(it->getTopic());
     msg = showReply(332, fd, tmp);
@@ -60,6 +60,7 @@ bool Server::find_channel(std::string &name, int fd, s_command c)
                 return true;
             if (it->getInviteSet())
             {
+                std::cout << "INVITE" << it->getInvited().find(fd)->first << " " << fd << std::endl;
                 if (it->getInvited().find(fd)->first == fd)
                 {
                     if (it->getKeySet())
@@ -123,17 +124,61 @@ bool Server::find_channel(std::string &name, int fd, s_command c)
     return false;
 }
 
-void Server::sendToChannel(std::string channel, std::string message)
+void Server::sendToChannel(std::string channel, std::string message, int type, int fd)
+{
+    Channels *tmp = getChannel(channel);
+    std::map<int, Clients> users = tmp->getUsers();
+    for (std::map<int, Clients>::iterator it = users.begin(); it != users.end(); ++it)
+    {
+        if (type == 1 && it->first == fd)
+        {
+            std::cout << "NOT SEND TO SENDER" << it->first << " " << fd << std::endl;
+            continue;
+        }
+        else
+        {
+            std::cout << "SEND TO " << it->first << std::endl;
+            send(it->first, message.c_str(), message.length(), 0);
+        }
+    }
+}
+
+bool Server::is_channel(std::string name)
 {
     for (std::vector<Channels>::iterator it = this->ch.begin(); it != this->ch.end(); ++it)
     {
-        if (it->getName() == channel)
+        if (it->getName() == name)
+            return true;
+    }
+    return false;
+}
+
+void Server::send_msg_to_Channel(std::string channel, std::string message, int fd)
+{
+    if (is_channel(channel))
+    {
+        std::cout << "IS CHANNEL" << std::endl;
+        Channels *tmp = getChannel(channel);
+        if (tmp->getOutsideSet())
         {
-            std::map<int, Clients> users = it->getUsers();
-            for (std::map<int, Clients>::iterator it2 = users.begin(); it2 != users.end(); ++it2)
-                send(it2->second.getFd(), message.c_str(), message.length(), 0);
-            break;
+            std::cout << "INVITE" << tmp->getInvited().find(fd)->first << " " << fd << std::endl;
+            if (tmp->getUsers().find(fd)->first == fd)
+                sendToChannel(channel, message, 1, fd);
+            else
+            {
+                std::vector<std::string> tmp;
+                tmp.push_back(channel);
+                send(fd, showReply(404, fd, tmp).c_str(), showReply(473, fd, tmp).size(), 0);
+            }
         }
+        else
+            sendToChannel(channel, message, 1, fd);
+    }
+    else
+    {
+        std::vector<std::string> tmp;
+        tmp.push_back(channel);
+        send(fd, showReply(403, fd, tmp).c_str(), showReply(403, fd, tmp).size(), 0);
     }
 }
 
@@ -183,16 +228,6 @@ int Server::irc_join(int fd, s_command &c)
     return 1;
 }
 
-bool Server::is_channel(std::string name)
-{
-    for (std::vector<Channels>::iterator it = this->ch.begin(); it != this->ch.end(); ++it)
-    {
-        if (it->getName() == name)
-            return true;
-    }
-    return false;
-}
-
 bool Server::irc_part(int fd, s_command &c)
 {
     // TODO: params size check
@@ -230,7 +265,7 @@ bool Server::irc_part(int fd, s_command &c)
                     channel->removeOp(channel->getOps().find(fd)->second);
                 std::string msg = ":"+this->cl.find(fd)->second.getNick()+"!~"+this->cl.find(fd)->second.getUser()+"@"+this->getIp(fd) + ".ip " + "PART " + *it + "\n";
                 send(fd, msg.c_str(), msg.length(), 0);
-                sendToChannel(*it, msg);
+                sendToChannel(*it, msg, 0, fd);
                 if (channel->getUsers().size() == 0)
                 {
                     for (std::vector<Channels>::iterator it2 = this->ch.begin(); it2 != this->ch.end(); ++it2)
@@ -250,7 +285,6 @@ bool Server::irc_part(int fd, s_command &c)
 
 bool Server::irc_topic(int fd, s_command &c)
 {
-    // TODO: params size check
     if (c.target.size() == 0)
     {
         //error 461
@@ -269,50 +303,64 @@ bool Server::irc_topic(int fd, s_command &c)
         send(fd, showReply(403, fd, params).c_str(), showReply(403, fd, params).size(), 0);
         return false;
     }
-    for (std::vector<Channels>::iterator it = this->ch.begin(); it != this->ch.end(); ++it)
+
+    if(is_channel(c.target[0]))
     {
-        if (it->getName() == c.target[0])
+        Channels *channel = getChannel(c.target[0]);
+        if (channel->getTopicSet() && (!c.first_pram.empty() || !c.second_pram.empty()))
         {
-            if (it->getUsers().find(fd)->first == fd)
+            if (channel->getOps().find(fd)->first != fd)
             {
-                if (!c.second_pram.empty() || !c.first_pram.empty())
+                std::vector<std::string> params;
+                params.push_back(c.target[0]);
+                send(fd, showReply(482, fd, params).c_str(), showReply(442, fd, params).size(), 0);
+                return false;
+            }
+        }
+        if (is_user_in_channel(c.target[0], fd))
+        {
+            if (!c.second_pram.empty() || !c.first_pram.empty())
+            {
+                channel->setTopic(c.second_pram + " " + c.first_pram);
+                channel->setTopicSet(true);
+                std::vector<std::string> params;
+                params.push_back(c.target[0]);
+                params.push_back(channel->getTopic());
+                send(fd, showReply(332, fd, params).c_str(), showReply(332, fd, params).size(), 0);
+                return (true);
+            }
+            else
+            {
+                std::vector<std::string> params;
+                if (!channel->getTopic().empty())
                 {
-                    if (!c.first_pram.empty())
-                        it->setTopic(c.first_pram);
-                    else
-                        it->setTopic(c.second_pram);
-                    std::vector<std::string> params;
                     params.push_back(c.target[0]);
-                    params.push_back(it->getTopic());
-                    std::string topic = showReply(332, fd, params);
-                    sendToChannel(it->getName(), topic);
+                    params.push_back(channel->getTopic());
+                    send(fd, showReply(332, fd, params).c_str(), showReply(332, fd, params).size(), 0);
                     return (true);
                 }
                 else
                 {
-                    std::vector<std::string> params;
-
-                    if (!it->getTopic().empty())
-                    {
-                        params.push_back(it->getName());
-                        params.push_back(it->getTopic());
-                        send(fd, showReply(332, fd, params).c_str(), showReply(332, fd, params).size(), 0);
-                    }
-                    else
-                    {
-                        params.push_back(it->getName());
-                        send(fd, showReply(331, fd, params).c_str(), showReply(331, fd, params).size(), 0);
-                    }
+                    params.push_back(c.target[0]);
+                    send(fd, showReply(331, fd, params).c_str(), showReply(331, fd, params).size(), 0);
                     return (true);
                 }
             }
-            //error 442
+        }
+        else
+        {
             std::vector<std::string> params;
             params.push_back(c.target[0]);
-            std::string error = showReply(442, fd, params);
-            send(fd, error.c_str(), error.size(), 0);
+            send(fd, showReply(442, fd, params).c_str(), showReply(442, fd, params).size(), 0);
             return false;
         }
+    }
+    else
+    {
+        std::vector<std::string> params;
+        params.push_back(c.target[0]);
+        send(fd, showReply(403, fd, params).c_str(), showReply(403, fd, params).size(), 0);
+        return false;
     }
     return (true);
 }
@@ -356,11 +404,12 @@ bool Server::irc_invite(int fd, s_command &c)
                 if (channel->getOps().find(fd)->first == fd)
                 {
                     std::cout << "channel_str111: " << channel_str << std::endl;
+                    channel->addInvited(this->cl.find(this->findClinet(c.target[0]))->second);
                     params.clear();
                     params.push_back(channel_str);
                     params.push_back(c.target[0]);
                     msg = showReply(341, fd, params);
-                    sendToChannel(channel_str, msg);
+                    sendToChannel(channel_str, msg, 0, fd);
                     msg = showReply(341, fd, params);
                     send(this->findClinet(c.target[0]), msg.c_str(), msg.size(), 0);
                     return (true);
@@ -396,8 +445,202 @@ bool Server::irc_invite(int fd, s_command &c)
 
 bool Server::irc_mode(int fd, s_command &c)
 {
-    (void)fd;
-    (void)c;
+    std::vector<std::string> params;
+    std::string msg = "";
+    int mode_type = c.first_pram[0] == '+' ? 1 : 0;
+
+    if (c.target.size() == 0)
+    {
+        std::vector<std::string> params;
+        params.push_back(c.command);
+        std::string error = showReply(461, fd, params);
+        send(fd, error.c_str(), error.size(), 0);
+        return false;
+    }
+    if(is_channel(c.target[0]))
+    {
+        Channels *channel = getChannel(c.target[0]);
+        if (channel->getOps().find(fd)->first == fd)
+        {
+            if (c.first_pram.size() > 1)
+            {
+                for (size_t i = 1; i < c.first_pram.size(); i++)
+                {
+                    if (c.first_pram[i] == 'o')
+                    {
+                        if (is_user_in_server(c.second_pram))
+                        {
+                            if (is_user_in_channel(c.target[0], this->findClinet(c.second_pram)))
+                            {
+                                if (mode_type == 1)
+                                {
+                                    channel->addOp(this->cl.find(this->findClinet(c.second_pram))->second);
+                                    channel->addmode("o");
+                                    params.clear();
+                                    params.push_back(c.target[0]);
+                                    params.push_back(c.second_pram);
+                                    params.push_back(c.first_pram);
+                                    msg = showReply(324, fd, params);
+                                    sendToChannel(c.target[0], msg, 0, fd);
+                                }
+                                else
+                                {
+                                    channel->removeOp(this->cl.find(this->findClinet(c.second_pram))->second);
+                                    params.clear();
+                                    params.push_back(c.target[0]);
+                                    params.push_back(c.second_pram);
+                                    params.push_back(c.first_pram);
+                                    msg = showReply(324, fd, params);
+                                    sendToChannel(c.target[0], msg, 0, fd);
+                                    std::cout << "channel->getMode(): " << channel->getMode() << std::endl;
+                                }
+                            }
+                            else
+                            {
+                                params.clear();
+                                params.push_back(c.second_pram);
+                                params.push_back(c.target[0]);
+                                msg = showReply(441, fd, params);
+                                send(fd, msg.c_str(), msg.size(), 0);
+                            }
+                        }
+                        else
+                        {
+                            params.clear();
+                            params.push_back(c.second_pram);
+                            msg = showReply(401, fd, params);
+                            send(fd, msg.c_str(), msg.size(), 0);
+                        }
+                    }
+                    else if (c.first_pram[i] == 'i')
+                    {
+                        if (mode_type == 1)
+                        {
+                            channel->setInviteSet(true);
+                            params.clear();
+                            params.push_back(c.target[0]);
+                            params.push_back(c.second_pram);
+                            params.push_back(c.first_pram);
+                            msg = showReply(324, fd, params);
+                            sendToChannel(c.target[0], msg, 0, fd);
+                        }
+                        else
+                        {
+                            channel->setInviteSet(false);
+                            params.clear();
+                            params.push_back(c.target[0]);
+                            params.push_back(c.second_pram);
+                            params.push_back(c.first_pram);
+                            msg = showReply(324, fd, params);
+                            sendToChannel(c.target[0], msg, 0, fd);
+                        }
+                    }
+                    else if (c.first_pram[i] == 'n')
+                    {
+                        if (mode_type == 1)
+                        {
+                            channel->setOutsideSet(true);
+                            params.clear();
+                            params.push_back(c.target[0]);
+                            params.push_back(c.second_pram);
+                            params.push_back(c.first_pram);
+                            msg = showReply(324, fd, params);
+                            sendToChannel(c.target[0], msg, 0, fd);
+                        }
+                        else
+                        {
+                            channel->setOutsideSet(false);
+                            params.clear();
+                            params.push_back(c.target[0]);
+                            params.push_back(c.second_pram);
+                            params.push_back(c.first_pram);
+                            msg = showReply(324, fd, params);
+                            sendToChannel(c.target[0], msg, 0, fd);
+                        }
+                    }
+                    else if (c.first_pram[i] == 't')
+                    {
+                        if (mode_type == 1)
+                        {
+                            channel->setTopicSet(true);
+                            params.clear();
+                            params.push_back(c.target[0]);
+                            params.push_back(c.second_pram);
+                            params.push_back(c.first_pram);
+                            msg = showReply(324, fd, params);
+                            sendToChannel(c.target[0], msg, 0, fd);
+                        }
+                        else
+                        {
+                            channel->setTopicSet(false);
+                            params.clear();
+                            params.push_back(c.target[0]);
+                            params.push_back(c.second_pram);
+                            params.push_back(c.first_pram);
+                            msg = showReply(324, fd, params);
+                            sendToChannel(c.target[0], msg, 0, fd);
+                        }
+                    }
+                    else if (c.first_pram[i] == 'k')
+                    {
+                        if (mode_type == 1)
+                        {
+                            channel->setKeySet(true);
+                            channel->setKey(c.second_pram);
+                            params.clear();
+                            params.push_back(c.target[0]);
+                            params.push_back(c.second_pram);
+                            params.push_back(c.first_pram);
+                            msg = showReply(324, fd, params);
+                            sendToChannel(c.target[0], msg, 0, fd);
+                        }
+                        else
+                        {
+                            channel->setKeySet(false);
+                            channel->setKey("");
+                            params.clear();
+                            params.push_back(c.target[0]);
+                            params.push_back(c.second_pram);
+                            params.push_back(c.first_pram);
+                            msg = showReply(324, fd, params);
+                            sendToChannel(c.target[0], msg, 0, fd);
+                        }
+                    }
+                    else
+                    {
+                        params.clear();
+                        params.push_back(c.first_pram);
+                        msg = showReply(472, fd, params);
+                        send(fd, msg.c_str(), msg.size(), 0);
+                    }
+                }
+            }
+            else
+            {
+                params.clear();
+                params.push_back(c.target[0]);
+                params.push_back(c.second_pram);
+                params.push_back(channel->getMode());
+                msg = showReply(324, fd, params);
+                send(fd, msg.c_str(), msg.size(), 0);
+                return (true);
+            }
+        }
+        else
+        {
+            params.clear();
+            params.push_back(c.target[0]);
+            msg = showReply(482, fd, params);
+            send(fd, msg.c_str(), msg.size(), 0);
+        }
+    }
+    else
+    {
+        params.clear();
+        params.push_back(c.target[0]);
+        msg = showReply(401, fd, params);
+        send(fd, msg.c_str(), msg.size(), 0);
+    }
 
     return (true);
 }
@@ -433,7 +676,7 @@ bool Server::irc_kick(int fd, s_command &c)
                         params.push_back(*it);
                         params.push_back(*it2);
                         msg = showReply(341, fd, params);
-                        sendToChannel(*it, msg);
+                        sendToChannel(*it, msg, 0, fd);
                         channel->removeUser(this->cl.find(this->findClinet(*it2))->second);
                     }
                     else
@@ -541,4 +784,3 @@ bool Server::irc_names(int fd, const s_command &c)
     }
     return (true);
 }
-

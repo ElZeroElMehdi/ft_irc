@@ -66,7 +66,7 @@ class Server
         bool irc_pong(int fd, s_command &c);
         bool irc_ping(int fd, s_command &c);
         bool irc_list(int fd, s_command &c);
-        void sendToChannel(std::string channel, std::string message);
+        void sendToChannel(std::string channel, std::string message, int type, int fd);
         void save_user(std::vector<Channels>::iterator it, int fd, s_command c);
         //for new nranch
         
@@ -74,6 +74,7 @@ class Server
         Channels* getChannel(std::string name);
         bool is_user_in_channel(std::string name, int fd);
         bool is_user_in_server(std::string nickname);
+        void send_msg_to_Channel(std::string channel, std::string message, int fd);
 
         //welcome
         void welcome(int fd, s_command &c);

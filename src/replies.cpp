@@ -46,7 +46,7 @@ IRCReply    replay_list( int code )
     rep.push_back((IRCReply){321, "RPL_LISTSTART", "Channel :Users Name", "n/a"});
     rep.push_back((IRCReply){322, "RPL_LIST", "$1 $2 :$3", "n/a"});
     rep.push_back((IRCReply){323, "RPL_LISTEND", ":End of /LIST", "Replies RPL_LISTSTART, RPL_LIST, RPL_LISTEND mark the start, actual replies with data and end of the server's response to a LIST command. If there are no channels available to return, only the start and end reply must be sent."});
-    rep.push_back((IRCReply){324, "RPL_CHANNELMODEIS", "<channel> <mode> <mode params>", "n/a"});
+    rep.push_back((IRCReply){324, "RPL_CHANNELMODEIS", "$1 $2 $3", "n/a"});
     rep.push_back((IRCReply){331, "RPL_NOTOPIC", "$1 :No topic is set", "n/a"});
     rep.push_back((IRCReply){332, "RPL_TOPIC", "$1 :$2", "When sending a TOPIC message to determine the channel topic, one of two replies is sent. If the topic is set, RPL_TOPIC is sent back else RPL_NOTOPIC."});
     rep.push_back((IRCReply){341, "RPL_INVITING", "$1 $2", "Returned by the server to indicate that the attempted INVITE message was successful and is being passed onto the end client."});
@@ -95,7 +95,7 @@ IRCReply    replay_list( int code )
     rep.push_back((IRCReply){401, "ERR_NOSUCHNICK", "$1 :No such nick/channel", "Used to indicate the nickname parameter supplied to a command is currently unused."});
     rep.push_back((IRCReply){402, "ERR_NOSUCHSERVER", "<server name> :No such server", "Used to indicate the server name given currently doesn't exist."});
     rep.push_back((IRCReply){403, "ERR_NOSUCHCHANNEL", "$1 :No such channel", "Used to indicate the given channel name is invalid."});
-    rep.push_back((IRCReply){404, "ERR_CANNOTSENDTOCHAN", "<channel name> :Cannot send to channel", "Sent to a user who is either (a) not on a channel which is mode +n or (b) not a chanop (or mode +v) on a channel which has mode +m set and is trying to send a PRIVMSG message to that channel."});
+    rep.push_back((IRCReply){404, "ERR_CANNOTSENDTOCHAN", "$1 :Cannot send to channel", "Sent to a user who is either (a) not on a channel which is mode +n or (b) not a chanop (or mode +v) on a channel which has mode +m set and is trying to send a PRIVMSG message to that channel."});
     rep.push_back((IRCReply){405, "ERR_TOOMANYCHANNELS", "<channel name> :You have joined too many channels", "Sent to a user when they have joined the maximum number of allowed channels and they try to join another channel."});
     rep.push_back((IRCReply){406, "ERR_WASNOSUCHNICK", "<nickname> :There was no such nickname", "Returned by WHOWAS to indicate there is no history information for that nickname."});
     rep.push_back((IRCReply){407, "ERR_TOOMANYTARGETS", "<target> :Duplicate recipients. No message delivered", "Returned to a client which is attempting to send PRIVMSG/NOTICE using the user@host destination format and for a user@host which has several occurrences."});
@@ -127,8 +127,8 @@ IRCReply    replay_list( int code )
     rep.push_back((IRCReply){467, "ERR_KEYSET", "<channel> :Channel key already set", "n/a"});
     rep.push_back((IRCReply){468, "RPL_INVALIDUSER", "$1 $2 :Your username is not valid", "n/a"});
     rep.push_back((IRCReply){471, "ERR_CHANNELISFULL", "<channel> :Cannot join channel (+l)", "n/a"});
-    rep.push_back((IRCReply){472, "ERR_UNKNOWNMODE", "<char> :is unknown mode char to me", "n/a"});
-    rep.push_back((IRCReply){473, "ERR_INVITEONLYCHAN", "<channel> :Cannot join channel (+i)", "n/a"});
+    rep.push_back((IRCReply){472, "ERR_UNKNOWNMODE", "$1 :is unknown mode char to me", "n/a"});
+    rep.push_back((IRCReply){473, "ERR_INVITEONLYCHAN", "$1 :Cannot join channel (+i)", "n/a"});
     rep.push_back((IRCReply){474, "ERR_BANNEDFROMCHAN", "<channel> :Cannot join channel (+b)", "n/a"});
     rep.push_back((IRCReply){475, "ERR_BADCHANNELKEY", "$1 :Cannot join channel (+k)", "n/a"});
     rep.push_back((IRCReply){481, "ERR_NOPRIVILEGES", ":Permission Denied- You're not an IRC operator", "Any command requiring operator privileges to operate must return this error to indicate the attempt was unsuccessful."});
