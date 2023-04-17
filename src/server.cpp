@@ -72,6 +72,9 @@ void Server::addFd(int fd, struct sockaddr_in Cl)
     newClient.setPort(ntohs(Cl.sin_port));
     newClient.setIp(std::string(inet_ntoa(Cl.sin_addr)));
     newClient.setIp(std::string(inet_ntoa(Cl.sin_addr)));
+    char hostname[256];
+    gethostname(hostname, sizeof(hostname));
+    newClient.setHostName(std::string(hostname));
     this->cl.insert(std::make_pair(fd, newClient));
 }
 

@@ -14,10 +14,12 @@ class Clients
         std::string ip;
         unsigned int port;
         std::string pass;
+        std::string hostName;
         // std::vector<Channels> chanel;
     public:
         Clients(int fd);
         Clients(std::string user, std::string nick, int fd);
+        void setHostName(std::string hostName);
         void setNick(std::string nick);
         void setUser(std::string user);
         void setSecendUser(std::string user);
@@ -37,6 +39,7 @@ class Clients
         void setIp(std::string ip);
         // void addChannel(Channels channel);
         bool checkIfRegistred();
+        std::string getHostName() const;
         ~Clients();
 };
 

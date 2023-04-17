@@ -120,3 +120,13 @@ void Clients::setPass(std::string pass)
 {
     this->pass = pass;
 }
+
+void Clients::setHostName(std::string hostName)
+{
+    this->hostName = hostName + ".ip";
+}
+
+std::string Clients::getHostName() const
+{
+    return this->hostName;
+}
