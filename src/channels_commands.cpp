@@ -38,7 +38,7 @@ void Server::save_user(std::vector<Channels>::iterator it, int fd, s_command c)
     (void)c;
     it->addUser(this->cl.find(fd)->second);
     std::vector<std::string> tmp;
-    std::string msg = ":"+this->cl.find(fd)->second.getNick()+"!~"+this->cl.find(fd)->second.getUser()+"@"+this->getIp(fd) + ".ip " + "JOIN :" + it->getName() + "\n";
+    std::string msg = ":" + this->cl.find(fd)->second.getHostName(this->getIp(fd)) + " JOIN :" + it->getName() + "\n";
     sendToChannel(it->getName(), msg, 0, fd);
     tmp.push_back(it->getName());
     tmp.push_back(it->getTopic());
@@ -214,7 +214,7 @@ int Server::irc_join(int fd, s_command &c)
             newChannel.addUser(this->cl.find(fd)->second);
             newChannel.addOp(this->cl.find(fd)->second);
             std::vector<std::string> tmp;
-            std::string msg = ":"+this->cl.find(fd)->second.getNick()+"!~"+this->cl.find(fd)->second.getUser()+"@"+this->getIp(fd) + ".ip " + "JOIN :" + *it + "\n";
+            std::string msg = ":" + this->cl.find(fd)->second.getHostName(this->getIp(fd)) + " JOIN :" + *it + "\n";
             send(fd, msg.c_str(), msg.length(), 0);
             ch.push_back(newChannel);
             tmp.push_back(*it);
@@ -480,7 +480,7 @@ bool Server::irc_mode(int fd, s_command &c)
                                     params.push_back(c.target[0]);
                                     params.push_back(c.second_pram);
                                     params.push_back(c.first_pram);
-                                    msg = ":" + this->cl.find(fd)->second.getHostName(this->hostName) + " MODE " + c.target[0] + " +o " + c.second_pram + "\n";
+                                    msg = ":" + this->cl.find(fd)->second.getHostName(this->getIp(fd)) + " MODE " + c.target[0] + " +o " + c.second_pram + "\n";
                                     sendToChannel(c.target[0], msg, 0, fd);
                                 }
                                 else
@@ -490,7 +490,7 @@ bool Server::irc_mode(int fd, s_command &c)
                                     params.push_back(c.target[0]);
                                     params.push_back(c.second_pram);
                                     params.push_back(c.first_pram);
-                                    msg = ":" + this->cl.find(fd)->second.getHostName(this->hostName) + " MODE " + c.target[0] + " -o " + c.second_pram + "\n";
+                                    msg = ":" + this->cl.find(fd)->second.getHostName(this->getIp(fd)) + " MODE " + c.target[0] + " -o " + c.second_pram + "\n";
                                     sendToChannel(c.target[0], msg, 0, fd);
                                     std::cout << "channel->getMode(): " << channel->getMode() << std::endl;
                                 }
@@ -521,7 +521,7 @@ bool Server::irc_mode(int fd, s_command &c)
                             params.push_back(c.target[0]);
                             params.push_back(c.second_pram);
                             params.push_back(c.first_pram);
-                            msg = ":" + this->cl.find(fd)->second.getHostName(this->hostName) + " MODE " + c.target[0] + " +i " + c.second_pram + "\n";
+                            msg = ":" + this->cl.find(fd)->second.getHostName(this->getIp(fd)) + " MODE " + c.target[0] + " +i " + c.second_pram + "\n";
                             sendToChannel(c.target[0], msg, 0, fd);
                         }
                         else
@@ -531,7 +531,7 @@ bool Server::irc_mode(int fd, s_command &c)
                             params.push_back(c.target[0]);
                             params.push_back(c.second_pram);
                             params.push_back(c.first_pram);
-                            msg = ":" + this->cl.find(fd)->second.getHostName(this->hostName) + " MODE " + c.target[0] + " -i " + c.second_pram + "\n";
+                            msg = ":" + this->cl.find(fd)->second.getHostName(this->getIp(fd)) + " MODE " + c.target[0] + " -i " + c.second_pram + "\n";
                             sendToChannel(c.target[0], msg, 0, fd);
                         }
                     }
@@ -544,7 +544,7 @@ bool Server::irc_mode(int fd, s_command &c)
                             params.push_back(c.target[0]);
                             params.push_back(c.second_pram);
                             params.push_back(c.first_pram);
-                            msg = ":" + this->cl.find(fd)->second.getHostName(this->hostName) + " MODE " + c.target[0] + " +n " + c.second_pram + "\n";
+                            msg = ":" + this->cl.find(fd)->second.getHostName(this->getIp(fd)) + " MODE " + c.target[0] + " +n " + c.second_pram + "\n";
                             sendToChannel(c.target[0], msg, 0, fd);
                         }
                         else
@@ -554,7 +554,7 @@ bool Server::irc_mode(int fd, s_command &c)
                             params.push_back(c.target[0]);
                             params.push_back(c.second_pram);
                             params.push_back(c.first_pram);
-                            msg = ":" + this->cl.find(fd)->second.getHostName(this->hostName) + " MODE " + c.target[0] + " -n " + c.second_pram + "\n";
+                            msg = ":" + this->cl.find(fd)->second.getHostName(this->getIp(fd)) + " MODE " + c.target[0] + " -n " + c.second_pram + "\n";
                             sendToChannel(c.target[0], msg, 0, fd);
                         }
                     }
@@ -567,7 +567,7 @@ bool Server::irc_mode(int fd, s_command &c)
                             params.push_back(c.target[0]);
                             params.push_back(c.second_pram);
                             params.push_back(c.first_pram);
-                            msg = ":" + this->cl.find(fd)->second.getHostName(this->hostName) + " MODE " + c.target[0] + " +t " + c.second_pram + "\n";
+                            msg = ":" + this->cl.find(fd)->second.getHostName(this->getIp(fd)) + " MODE " + c.target[0] + " +t " + c.second_pram + "\n";
                             sendToChannel(c.target[0], msg, 0, fd);
                         }
                         else
@@ -577,7 +577,7 @@ bool Server::irc_mode(int fd, s_command &c)
                             params.push_back(c.target[0]);
                             params.push_back(c.second_pram);
                             params.push_back(c.first_pram);
-                            msg = ":" + this->cl.find(fd)->second.getHostName(this->hostName) + " MODE " + c.target[0] + " -t " + c.second_pram + "\n";
+                            msg = ":" + this->cl.find(fd)->second.getHostName(this->getIp(fd)) + " MODE " + c.target[0] + " -t " + c.second_pram + "\n";
                             sendToChannel(c.target[0], msg, 0, fd);
                         }
                     }
@@ -591,7 +591,7 @@ bool Server::irc_mode(int fd, s_command &c)
                             params.push_back(c.target[0]);
                             params.push_back(c.second_pram);
                             params.push_back(c.first_pram);
-                            msg = ":" + this->cl.find(fd)->second.getHostName(this->hostName) + " MODE " + c.target[0] + " +k " + c.second_pram + "\n";
+                            msg = ":" + this->cl.find(fd)->second.getHostName(this->getIp(fd)) + " MODE " + c.target[0] + " +k " + c.second_pram + "\n";
                             sendToChannel(c.target[0], msg, 0, fd);
                         }
                         else
@@ -602,7 +602,7 @@ bool Server::irc_mode(int fd, s_command &c)
                             params.push_back(c.target[0]);
                             params.push_back(c.second_pram);
                             params.push_back(c.first_pram);
-                            msg = ":" + this->cl.find(fd)->second.getHostName(this->hostName) + " MODE " + c.target[0] + " -k " + c.second_pram + "\n";
+                            msg = ":" + this->cl.find(fd)->second.getHostName(this->getIp(fd)) + " MODE " + c.target[0] + " -k " + c.second_pram + "\n";
                             sendToChannel(c.target[0], msg, 0, fd);
                         }
                     }

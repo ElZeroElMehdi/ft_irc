@@ -69,14 +69,14 @@ void Server::addFd(int fd, struct sockaddr_in Cl)
     this->allFd.push_back(newFd);
     if (fd == this->fd_server)
     {
-        gethostname(hostname, sizeof(hostname));
-        setHostName(std::string(hostname));
+        // gethostname(hostname, sizeof(hostname));
+        
+        setHostName(this->getIp(fd));
         std::cout << "HOST : " << hostname << std::endl;
         return;
     }
     Clients newClient(fd);
     newClient.setPort(ntohs(Cl.sin_port));
-    newClient.setIp(std::string(inet_ntoa(Cl.sin_addr)));
     newClient.setIp(std::string(inet_ntoa(Cl.sin_addr)));
     gethostname(hostname, sizeof(hostname));
     newClient.setHostName(std::string(hostname));
@@ -236,7 +236,7 @@ std::string Server::showReply(int code, int fd, std::vector<std::string> &vars)
     std::vector<std::string> str;
     if (code == 1)
     {
-        s = Nick + "!~" + User + "@" + this->hostName;
+        s = Nick + "!~" + User + "@" + ip;
         s = s.substr(0, s.find(".ip"));
         str = splitString(s, ",");
         s = get_replay(code, str).msg;
@@ -244,7 +244,7 @@ std::string Server::showReply(int code, int fd, std::vector<std::string> &vars)
     }
     else if (code == 2)
     {
-        s = ip + ", v2.0";
+        s = "IRC-SERVER,v2.0";
         str = splitString(s, ",");
         s = get_replay(code, str).msg;
         str.clear();
@@ -265,17 +265,16 @@ std::string Server::showReply(int code, int fd, std::vector<std::string> &vars)
     }
     else
         s = get_replay(code, vars).msg;
-    s = ":" + ip + " " + ft_rep_code(code) + " " + Nick + " " + s + "\n";
+    s = ":IRC-SERVER " + ft_rep_code(code) + " " + Nick + " " + s + "\n";
     return s;
 }
 
 
 std::string Server::getIp(int fd)
 {
-    if(fd == this->fd_server)
-        return "localhost";
-    else
-        return this->cl.find(fd)->second.getIp();
+    if (fd == this->fd_server)
+        return ("localhost");
+    return (this->cl.find(fd)->second.getIp());
 }
 
 bool Server::isPass(std::string pass)

@@ -5,7 +5,7 @@ IRCReply    replay_list( int code )
     std::vector<IRCReply> rep;
     
     rep.push_back((IRCReply){001, "RPL_WELCOME",    ":Welcome to the Internet Relay Network $1", "n/a"});
-    rep.push_back((IRCReply){002, "RPL_YOURHOST",   ":Your host is $1, running version $2", "n/a"});
+    rep.push_back((IRCReply){002, "RPL_YOURHOST",   ":Your host is $1 running version $2", "n/a"});
     rep.push_back((IRCReply){003, "RPL_CREATED",    ":This server was created $1 UTC", "n/a"});
     rep.push_back((IRCReply){004, "RPL_MYINFO",     "$1 $2 $3", "n/a"});
     rep.push_back((IRCReply){005, "RPL_BOUNCE",     "Try server $1, port $2", "Sent by the server to a user to suggest an alternative server.  This is often used when the connection is refused because the server is already full."});

@@ -125,7 +125,7 @@ int Server::irc_nick(int fd, s_command &c)
             if (this->cl.find(fd)->second.getRegistred() == true)
             {
                 // std::string msg = ":" + this->cl.find(fd)->second.getNick() + "!~" + this->cl.find(fd)->second.getUser() + "@" + this->cl.find(fd)->second.getIp() + ".ip NICK :" + c.target[0] + "\n";
-                std::string msg = ":" + this->cl.find(fd)->second.getNick() + "!~" + this->cl.find(fd)->second.getUser() + "@" + this->cl.find(fd)->second.getHostName(this->hostName) + " NICK :" + c.target[0] + "\n";
+                std::string msg = ":" + this->cl.find(fd)->second.getNick() + "!~" + this->cl.find(fd)->second.getUser() + "@" + this->cl.find(fd)->second.getHostName(this->getIp(fd)) + " NICK :" + c.target[0] + "\n";
                 send(fd, msg.c_str(), msg.length(), 0);
             }
             this->cl.find(fd)->second.setNick(c.target[0]);
@@ -254,7 +254,7 @@ bool Server::irc_privmsg_notice(int fd, s_command &c)
         for(std::vector<std::string>::iterator it = c.target.begin();it != c.target.end();++it)
         {
             //check if  *it channel or user
-            std::string msg = ":" + this->cl.find(fd)->second.getHostName(this->hostName) + " " + str_toupper(c.command) + " " + (*it) + " :";
+            std::string msg = ":" + this->cl.find(fd)->second.getHostName(this->getIp(fd)) + " " + str_toupper(c.command) + " " + (*it) + " :";
             if (!c.first_pram.empty())
                 msg += c.first_pram + "\n";
             else
@@ -381,7 +381,7 @@ bool Server::irc_ping(int fd, s_command &c)
 
 void Server::setHostName(std::string hostName)
 {
-    this->hostName = hostName + ".ip";
+    this->hostName = hostName;
 }
 
 std::string Server::getHostName() const
