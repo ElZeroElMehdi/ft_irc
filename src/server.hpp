@@ -80,7 +80,6 @@ class Server
         void welcome(int fd, s_command &c);
         //bonus
         bool irc_bot(int fd, s_command &c);
-        bool irc_send(int fd, s_command &c);
         ~Server(); 
 };
 #endif
