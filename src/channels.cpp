@@ -177,14 +177,14 @@ bool Channels::getVisibleSet() const
 
 // // ============================ getters vector ============================
 
-std::map<int, Clients> Channels::getUsers() const
+std::map<int, Clients> *Channels::getUsers()
 {
-    return this->users;
+    return &users;
 }
 
-std::map<int, Clients> Channels::getOps() const
+std::map<int, Clients> *Channels::getOps()
 {
-    return this->ops;
+    return &ops;
 }
 
 std::map<int, Clients> Channels::getModerators() const
@@ -199,13 +199,13 @@ std::map<int, Clients> Channels::getInvited() const
 
 // ============================ setters vector ============================
 
-void Channels::addUser(Clients &user)
+void Channels::addUser(Clients user)
 {
     if (this->users.find(user.getFd()) == this->users.end())
         this->users.insert(std::pair<int, Clients>(user.getFd(), user));
     std::cout << "User : " << this->users.find(user.getFd())->second.getUser() << " added to channel : " << this->name << std::endl;
 }
-void Channels::addOp(Clients &op)
+void Channels::addOp(Clients op)
 {
     if (this->ops.find(op.getFd()) == this->ops.end())
         this->ops.insert(std::pair<int, Clients>(op.getFd(), op));

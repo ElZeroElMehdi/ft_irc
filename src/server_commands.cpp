@@ -300,7 +300,7 @@ bool Server::irc_list(int fd, s_command &c)
     //322 RPL_LIST
     for(std::vector<Channels>::iterator it = this->ch.begin(); it != this->ch.end(); ++it){
         vars.push_back(it->getName());
-        vars.push_back(ft_itoa(it->getUsers().size()));
+        vars.push_back(ft_itoa(it->getUsers()->size()));
         vars.push_back(it->getTopic());
         replay = showReply(322, fd, vars);
         send(fd, replay.c_str(), replay.length(), 0);
@@ -330,13 +330,15 @@ bool Server::irc_quit(int fd, s_command &c)
     error +="\n";
     send(fd, error.c_str(), error.length(), 0);
     error = ":" + this->cl.find(fd)->second.getNick() + "!~" + this->cl.find(fd)->second.getUser() + "@" + this->cl.find(fd)->second.getIp() + " QUIT :" + "Quit: " + this->cl.find(fd)->second.getNick() + "\n";
+    
+    
     for (std::vector<Channels>::iterator it = this->ch.begin(); it != this->ch.end(); ++it)
     {
-        it->getUsers().erase(it->getUsers().find(fd));
         sendToChannel(it->getName(), error, 1, fd);
+        it->getUsers()->erase(it->getUsers()->find(fd));
+        it->getOps()->erase(it->getOps()->find(fd));
     }
-    for (std::vector<Channels>::iterator it = this->ch.begin(); it != this->ch.end(); ++it)
-        it->getOps().erase(it->getOps().find(fd));
+    // for (std::vector<Channels>::iterator it = this->ch.begin(); it != this->ch.end(); ++it)
     this->cl.erase(fd);
     close(fd);
     return (1);
