@@ -6,12 +6,14 @@ void Server::welcome(int fd, s_command &c)
     Clients &user = this->cl.find(fd)->second;
     if (!user.getNick().empty() && !user.getUser().empty() && !user.getPass().empty() && !user.getRegistred() && !user.getStatus())
     {
+        std::cout <<">>"<< user.getStatus() << std::endl;
         std::string msg = showReply(1, fd, c.target);
         send(fd, msg.c_str(), msg.length(), 0);
         msg = showReply(2, fd, c.target);
         send(fd, msg.c_str(), msg.length(), 0);
         msg = showReply(3, fd, c.target);
         send(fd, msg.c_str(), msg.length(), 0);
+        this->cl.find(fd)->second.SetStatus();
     }
 }
 
@@ -122,11 +124,21 @@ int Server::irc_nick(int fd, s_command &c)
         }
         else
         {
-            if (this->cl.find(fd)->second.getRegistred() == true)
+            if (this->cl.find(fd)->second.getRegistred() == true || this->cl.find(fd)->second.getStatus())
             {
                 std::string msg = ":" + this->cl.find(fd)->second.getNick() + "!~" + this->cl.find(fd)->second.getUser() + "@" + this->cl.find(fd)->second.getHostName(this->getIp(fd)) + " NICK :" + c.target[0] + "\n";
+                // send(fd, msg.c_str(), msg.length(), 0);
+                for (std::vector<Channels>::iterator it = this->ch.begin(); it != this->ch.end(); ++it)
+                {
+                    std::string nicker = this->cl.find(fd)->second.getNick();
+                    if (it->isInChannel(nicker))
+                        this->sendToChannel(it->getName(), msg, 1, fd);
+                    it->edit_nick(fd, c.target[0]);
+                }
+                std::cout << "here01" << std::endl;
                 send(fd, msg.c_str(), msg.length(), 0);
             }
+            std::cout << "here02" << std::endl;
             this->cl.find(fd)->second.setNick(c.target[0]);
             welcome(fd, c);
             this->cl.find(fd)->second.checkIfRegistred();

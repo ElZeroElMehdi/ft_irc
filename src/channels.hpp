@@ -84,6 +84,7 @@ class Channels
         void removeModerator(Clients& moderator);
         void removeInvited(Clients& invited);
         void rm(int fd);
+        void edit_nick(int fd, std::string new_nick);
 
 };
 

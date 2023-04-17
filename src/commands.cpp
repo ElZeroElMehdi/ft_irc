@@ -3,6 +3,10 @@
 Commands::Commands(std::string _cmd)
 {
     int i;
+    if (_cmd.find("\n") == std::string::npos)
+    {
+        _cmd = "QUIT :Closed-connection\r\n";
+    }
     _cmd = replacer(_cmd, "\r\n", "\n");
     std::vector<std::string> splitedCommands = splitString2(_cmd, "\n");
     for (std::vector<std::string>::iterator it = splitedCommands.begin(); it != splitedCommands.end(); it++)

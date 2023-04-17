@@ -46,7 +46,7 @@ void Server::save_user(std::vector<Channels>::iterator it, int fd, s_command c)
     tmp.push_back(it->getTopic());
     msg = showReply(332, fd, tmp);
     send(fd, msg.c_str(), msg.length(), 0);
-    Commands names_cmd = Commands("names " + it->getName());
+    Commands names_cmd = Commands("names " + it->getName() + "\n");
     irc_names(fd, names_cmd.getList()[0]);
 }
 
@@ -170,7 +170,8 @@ void Server::send_msg_to_Channel(std::string channel, std::string message, int f
             {
                 std::vector<std::string> tmp;
                 tmp.push_back(channel);
-                send(fd, showReply(404, fd, tmp).c_str(), showReply(473, fd, tmp).size(), 0);
+                std::string msg = showReply(404, fd, tmp);
+                send(fd, msg.c_str(), msg.length(), 0);
             }
         }
         else
@@ -223,7 +224,7 @@ int Server::irc_join(int fd, s_command &c)
             tmp.push_back(newChannel.getTopic());
             msg = showReply(332, fd, tmp);
             send(fd, msg.c_str(), msg.length(), 0);
-            Commands names_cmd = Commands("names " + *it);
+            Commands names_cmd = Commands("names " + *it + "\n");
             irc_names(fd, names_cmd.getList()[0]);
         }
     }
@@ -315,7 +316,7 @@ bool Server::irc_topic(int fd, s_command &c)
             {
                 std::vector<std::string> params;
                 params.push_back(c.target[0]);
-                send(fd, showReply(482, fd, params).c_str(), showReply(442, fd, params).size(), 0);
+                send(fd, showReply(482, fd, params).c_str(), showReply(482, fd, params).size(), 0);
                 return false;
             }
         }
@@ -610,6 +611,7 @@ bool Server::irc_mode(int fd, s_command &c)
                             sendToChannel(c.target[0], msg, 0, fd);
                         }
                     }
+                    else if (c.first_pram[i] == 's'){}
                     else
                     {
                         params.clear();

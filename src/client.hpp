@@ -19,6 +19,7 @@ class Clients
     public:
         Clients(int fd);
         Clients(std::string user, std::string nick, int fd);
+        void SetStatus();
         void setHostName(std::string hostName);
         void setNick(std::string nick);
         void setUser(std::string user);

@@ -1,6 +1,6 @@
 #include "client.hpp"
 
-Clients::Clients(int fd) : client_fd(fd), status(0), isRegistred(false)
+Clients::Clients(int fd) : client_fd(fd), status(false), isRegistred(false)
 {
     this->setRegistred(false);
     this->nick = "";
@@ -10,6 +10,10 @@ Clients::Clients(int fd) : client_fd(fd), status(0), isRegistred(false)
 void Clients::setNick(std::string nick)
 {
     this->nick = nick;
+}
+void Clients::SetStatus()
+{
+    status = 1;
 }
 void Clients::setUser(std::string user)
 {
@@ -84,10 +88,7 @@ bool Clients::checkIfRegistred()
     if (!this->nick.empty() && !this->user.empty() && !this->pass.empty() && !this->isRegistred)
         this->isRegistred = true;
     else
-    {
-        this->isRegistred = false;
         return false;
-    }
     return true;
 }
 

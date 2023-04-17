@@ -289,3 +289,23 @@ void Channels::rm(int fd)
         }
     }
 }
+
+void Channels::edit_nick(int fd, std::string new_nick)
+{
+    for (std::map<int, Clients>::iterator it = this->users.begin(); it != this->users.end(); ++it)
+    {
+        if (it->first == fd)
+        {
+            it->second.setNick(new_nick);
+            break;
+        }
+    }
+    for (std::map<int, Clients>::iterator it = this->ops.begin(); it != this->ops.end(); ++it)
+    {
+        if (it->first == fd)
+        {
+            it->second.setNick(new_nick);
+            break;
+        }
+    }
+}
