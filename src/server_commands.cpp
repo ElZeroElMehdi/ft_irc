@@ -329,8 +329,16 @@ bool Server::irc_quit(int fd, s_command &c)
         error = "ERROR : Closing Link: 0.0.0.0 (Quit: " ")";
     error +="\n";
     send(fd, error.c_str(), error.length(), 0);
-    close(fd);
+    error = ":" + this->cl.find(fd)->second.getNick() + "!~" + this->cl.find(fd)->second.getUser() + "@" + this->cl.find(fd)->second.getIp() + " QUIT :" + "Quit: " + this->cl.find(fd)->second.getNick() + "\n";
+    for (std::vector<Channels>::iterator it = this->ch.begin(); it != this->ch.end(); ++it)
+    {
+        it->getUsers().erase(it->getUsers().find(fd));
+        sendToChannel(it->getName(), error, 1, fd);
+    }
+    for (std::vector<Channels>::iterator it = this->ch.begin(); it != this->ch.end(); ++it)
+        it->getOps().erase(it->getOps().find(fd));
     this->cl.erase(fd);
+    close(fd);
     return (1);
 }
 

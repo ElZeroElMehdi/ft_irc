@@ -326,7 +326,7 @@ bool Server::irc_topic(int fd, s_command &c)
                 std::vector<std::string> params;
                 params.push_back(c.target[0]);
                 params.push_back(channel->getTopic());
-                std::string msg = showReply(332, fd, params);
+                std::string msg = ":"+this->cl.find(fd)->second.getNick()+"!~"+this->cl.find(fd)->second.getUser()+"@"+this->getIp(fd) + ".ip " + "TOPIC " + c.target[0] + " :" + channel->getTopic() + "\n";
                 sendToChannel(c.target[0], msg, 0, fd);
                 return (true);
             }
@@ -407,9 +407,10 @@ bool Server::irc_invite(int fd, s_command &c)
                     std::cout << "channel_str111: " << channel_str << std::endl;
                     channel->addInvited(this->cl.find(this->findClinet(c.target[0]))->second);
                     params.clear();
-                    params.push_back(channel_str);
+                    params.push_back(this->cl.find(this->findClinet(c.target[0]))->second.getNick());
                     params.push_back(c.target[0]);
-                    msg = showReply(341, fd, params);
+                    params.push_back(channel_str);
+                    msg = ":"+this->cl.find(fd)->second.getNick()+"!~"+this->cl.find(fd)->second.getUser()+"@"+this->getIp(fd) + ".ip " + "INVITE " + c.target[0] + " " + channel_str + "\n";
                     sendToChannel(channel_str, msg, 0, fd);
                     msg = showReply(341, fd, params);
                     send(this->findClinet(c.target[0]), msg.c_str(), msg.size(), 0);
@@ -675,7 +676,7 @@ bool Server::irc_kick(int fd, s_command &c)
                         params.clear();
                         params.push_back(*it);
                         params.push_back(*it2);
-                        msg = showReply(341, fd, params);
+                        msg = ":"+this->cl.find(fd)->second.getNick()+"!~"+this->cl.find(fd)->second.getUser()+"@"+this->getIp(fd) + ".ip " + "KICK " + *it + " " + *it2 + " :" + c.second_pram + "\n";
                         sendToChannel(*it, msg, 0, fd);
                         channel->removeUser(this->cl.find(this->findClinet(*it2))->second);
                     }
