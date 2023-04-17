@@ -17,6 +17,7 @@ class Server
         std::vector<pollfd> allFd;
         std::map<int, Clients> cl;
         std::vector<Channels> ch;
+        std::string hostName;
 
     public:
         Server(const char *pt, const char *password);
@@ -80,6 +81,12 @@ class Server
         void welcome(int fd, s_command &c);
         //bonus
         bool irc_bot(int fd, s_command &c);
+
+
+        void setHostName(std::string hostName);
+
+        std::string getHostName() const;
+
         ~Server(); 
 };
 #endif

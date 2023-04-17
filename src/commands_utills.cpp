@@ -42,6 +42,7 @@ std::vector<IRCCommand> commands_list()
     rep.push_back((IRCCommand){"WHOIS",     0});
     rep.push_back((IRCCommand){"NAMES",     0});
     rep.push_back((IRCCommand){"LIST",      0});
+    rep.push_back((IRCCommand){"MODE",      0});
     rep.push_back((IRCCommand){"TOPIC",     0});
     rep.push_back((IRCCommand){"PONG",      0});
     rep.push_back((IRCCommand){"PING",      0});

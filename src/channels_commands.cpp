@@ -326,7 +326,8 @@ bool Server::irc_topic(int fd, s_command &c)
                 std::vector<std::string> params;
                 params.push_back(c.target[0]);
                 params.push_back(channel->getTopic());
-                send(fd, showReply(332, fd, params).c_str(), showReply(332, fd, params).size(), 0);
+                std::string msg = showReply(332, fd, params);
+                sendToChannel(c.target[0], msg, 0, fd);
                 return (true);
             }
             else
@@ -475,12 +476,11 @@ bool Server::irc_mode(int fd, s_command &c)
                                 if (mode_type == 1)
                                 {
                                     channel->addOp(this->cl.find(this->findClinet(c.second_pram))->second);
-                                    channel->addmode("o");
                                     params.clear();
                                     params.push_back(c.target[0]);
                                     params.push_back(c.second_pram);
                                     params.push_back(c.first_pram);
-                                    msg = showReply(324, fd, params);
+                                    msg = ":" + this->cl.find(fd)->second.getHostName(this->hostName) + " MODE " + c.target[0] + " +o " + c.second_pram + "\n";
                                     sendToChannel(c.target[0], msg, 0, fd);
                                 }
                                 else
@@ -490,7 +490,7 @@ bool Server::irc_mode(int fd, s_command &c)
                                     params.push_back(c.target[0]);
                                     params.push_back(c.second_pram);
                                     params.push_back(c.first_pram);
-                                    msg = showReply(324, fd, params);
+                                    msg = ":" + this->cl.find(fd)->second.getHostName(this->hostName) + " MODE " + c.target[0] + " -o " + c.second_pram + "\n";
                                     sendToChannel(c.target[0], msg, 0, fd);
                                     std::cout << "channel->getMode(): " << channel->getMode() << std::endl;
                                 }
@@ -521,7 +521,7 @@ bool Server::irc_mode(int fd, s_command &c)
                             params.push_back(c.target[0]);
                             params.push_back(c.second_pram);
                             params.push_back(c.first_pram);
-                            msg = showReply(324, fd, params);
+                            msg = ":" + this->cl.find(fd)->second.getHostName(this->hostName) + " MODE " + c.target[0] + " +i " + c.second_pram + "\n";
                             sendToChannel(c.target[0], msg, 0, fd);
                         }
                         else
@@ -531,7 +531,7 @@ bool Server::irc_mode(int fd, s_command &c)
                             params.push_back(c.target[0]);
                             params.push_back(c.second_pram);
                             params.push_back(c.first_pram);
-                            msg = showReply(324, fd, params);
+                            msg = ":" + this->cl.find(fd)->second.getHostName(this->hostName) + " MODE " + c.target[0] + " -i " + c.second_pram + "\n";
                             sendToChannel(c.target[0], msg, 0, fd);
                         }
                     }
@@ -544,7 +544,7 @@ bool Server::irc_mode(int fd, s_command &c)
                             params.push_back(c.target[0]);
                             params.push_back(c.second_pram);
                             params.push_back(c.first_pram);
-                            msg = showReply(324, fd, params);
+                            msg = ":" + this->cl.find(fd)->second.getHostName(this->hostName) + " MODE " + c.target[0] + " +n " + c.second_pram + "\n";
                             sendToChannel(c.target[0], msg, 0, fd);
                         }
                         else
@@ -554,7 +554,7 @@ bool Server::irc_mode(int fd, s_command &c)
                             params.push_back(c.target[0]);
                             params.push_back(c.second_pram);
                             params.push_back(c.first_pram);
-                            msg = showReply(324, fd, params);
+                            msg = ":" + this->cl.find(fd)->second.getHostName(this->hostName) + " MODE " + c.target[0] + " -n " + c.second_pram + "\n";
                             sendToChannel(c.target[0], msg, 0, fd);
                         }
                     }
@@ -567,7 +567,7 @@ bool Server::irc_mode(int fd, s_command &c)
                             params.push_back(c.target[0]);
                             params.push_back(c.second_pram);
                             params.push_back(c.first_pram);
-                            msg = showReply(324, fd, params);
+                            msg = ":" + this->cl.find(fd)->second.getHostName(this->hostName) + " MODE " + c.target[0] + " +t " + c.second_pram + "\n";
                             sendToChannel(c.target[0], msg, 0, fd);
                         }
                         else
@@ -577,7 +577,7 @@ bool Server::irc_mode(int fd, s_command &c)
                             params.push_back(c.target[0]);
                             params.push_back(c.second_pram);
                             params.push_back(c.first_pram);
-                            msg = showReply(324, fd, params);
+                            msg = ":" + this->cl.find(fd)->second.getHostName(this->hostName) + " MODE " + c.target[0] + " -t " + c.second_pram + "\n";
                             sendToChannel(c.target[0], msg, 0, fd);
                         }
                     }
@@ -591,7 +591,7 @@ bool Server::irc_mode(int fd, s_command &c)
                             params.push_back(c.target[0]);
                             params.push_back(c.second_pram);
                             params.push_back(c.first_pram);
-                            msg = showReply(324, fd, params);
+                            msg = ":" + this->cl.find(fd)->second.getHostName(this->hostName) + " MODE " + c.target[0] + " +k " + c.second_pram + "\n";
                             sendToChannel(c.target[0], msg, 0, fd);
                         }
                         else
@@ -602,7 +602,7 @@ bool Server::irc_mode(int fd, s_command &c)
                             params.push_back(c.target[0]);
                             params.push_back(c.second_pram);
                             params.push_back(c.first_pram);
-                            msg = showReply(324, fd, params);
+                            msg = ":" + this->cl.find(fd)->second.getHostName(this->hostName) + " MODE " + c.target[0] + " -k " + c.second_pram + "\n";
                             sendToChannel(c.target[0], msg, 0, fd);
                         }
                     }

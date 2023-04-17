@@ -39,7 +39,7 @@ class Clients
         void setIp(std::string ip);
         // void addChannel(Channels channel);
         bool checkIfRegistred();
-        std::string getHostName() const;
+        std::string getHostName(std::string server_host) const;
         ~Clients();
 };
 

@@ -4,7 +4,7 @@ IRCReply    replay_list( int code )
 {
     std::vector<IRCReply> rep;
     
-    rep.push_back((IRCReply){001, "RPL_WELCOME",    ":Welcome to the Internet Relay Network $1!~$2@$3", "n/a"});
+    rep.push_back((IRCReply){001, "RPL_WELCOME",    ":Welcome to the Internet Relay Network $1", "n/a"});
     rep.push_back((IRCReply){002, "RPL_YOURHOST",   ":Your host is $1, running version $2", "n/a"});
     rep.push_back((IRCReply){003, "RPL_CREATED",    ":This server was created $1 UTC", "n/a"});
     rep.push_back((IRCReply){004, "RPL_MYINFO",     "$1 $2 $3", "n/a"});

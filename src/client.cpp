@@ -126,7 +126,7 @@ void Clients::setHostName(std::string hostName)
     this->hostName = hostName + ".ip";
 }
 
-std::string Clients::getHostName() const
+std::string Clients::getHostName(std::string server_host) const
 {
-    return this->hostName;
+    return nick + "!~" + user + "@" + server_host;
 }

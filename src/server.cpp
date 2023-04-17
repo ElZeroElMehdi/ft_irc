@@ -63,16 +63,21 @@ void Server::listenConix()
 void Server::addFd(int fd, struct sockaddr_in Cl)
 {
     struct pollfd newFd;
+    char hostname[256];
     newFd.fd = fd;
     newFd.events = POLLIN;
     this->allFd.push_back(newFd);
     if (fd == this->fd_server)
+    {
+        gethostname(hostname, sizeof(hostname));
+        setHostName(std::string(hostname));
+        std::cout << "HOST : " << hostname << std::endl;
         return;
+    }
     Clients newClient(fd);
     newClient.setPort(ntohs(Cl.sin_port));
     newClient.setIp(std::string(inet_ntoa(Cl.sin_addr)));
     newClient.setIp(std::string(inet_ntoa(Cl.sin_addr)));
-    char hostname[256];
     gethostname(hostname, sizeof(hostname));
     newClient.setHostName(std::string(hostname));
     this->cl.insert(std::make_pair(fd, newClient));
@@ -176,6 +181,8 @@ void Server::chat()//other name like runServer
 
 int Server::command_routes(int fd, s_command &c)
 {
+    if (c.command.empty())
+        return 0;
     IRCCommand info = command_info(c.command);
     bool registred = this->cl.find(fd)->second.getRegistred();
 
@@ -229,7 +236,8 @@ std::string Server::showReply(int code, int fd, std::vector<std::string> &vars)
     std::vector<std::string> str;
     if (code == 1)
     {
-        s = Nick + "," + User + "," + this->cl.find(fd)->second.getHostName().substr(0, this->cl.find(fd)->second.getHostName().length() - 3);
+        s = Nick + "!~" + User + "@" + this->hostName;
+        s = s.substr(0, s.find(".ip"));
         str = splitString(s, ",");
         s = get_replay(code, str).msg;
         str.clear();
