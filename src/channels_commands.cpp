@@ -613,7 +613,8 @@ bool Server::irc_mode(int fd, s_command &c)
                     else
                     {
                         params.clear();
-                        params.push_back(c.first_pram);
+                        // std::string tmp =  c.first_pram[0];
+                        params.push_back(std::string(c.first_pram).substr(i, i));
                         msg = showReply(472, fd, params);
                         send(fd, msg.c_str(), msg.size(), 0);
                     }

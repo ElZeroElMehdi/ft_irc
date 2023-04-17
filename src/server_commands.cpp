@@ -124,7 +124,6 @@ int Server::irc_nick(int fd, s_command &c)
         {
             if (this->cl.find(fd)->second.getRegistred() == true)
             {
-                // std::string msg = ":" + this->cl.find(fd)->second.getNick() + "!~" + this->cl.find(fd)->second.getUser() + "@" + this->cl.find(fd)->second.getIp() + ".ip NICK :" + c.target[0] + "\n";
                 std::string msg = ":" + this->cl.find(fd)->second.getNick() + "!~" + this->cl.find(fd)->second.getUser() + "@" + this->cl.find(fd)->second.getHostName(this->getIp(fd)) + " NICK :" + c.target[0] + "\n";
                 send(fd, msg.c_str(), msg.length(), 0);
             }
