@@ -4,16 +4,16 @@ Channels::Channels()
 {
     this->name = "";
     this->topic = "";
-    this->mode = "";
+    this->mode = "+";
     this->key = "";
 
     this->topicSet = false;
     this->modeSet = false;
     this->keySet = false;
-    this->scretSet = true;
+    this->scretSet = false;
     this->inviteSet = false;
     this->limitSet = false;
-    this->outsideSet = true;
+    this->outsideSet = false;
     this->visibleSet = false;
 }
 
@@ -23,13 +23,11 @@ Channels::Channels(std::string name, std::string key)
     this->key = key;
     this->timestamp = time(NULL);
     this->topic = "Welcome to " + name;
+    this->mode = "+";
 
     this->topicSet = false;
     this->modeSet = false;
-    if (key != "")
-        this->keySet = true;
-    else
-        this->keySet = false;
+    this->keySet = false;
     this->scretSet = false;
     this->inviteSet = false;
     this->outsideSet = false;
@@ -128,6 +126,11 @@ void Channels::setLimitSet(bool limitSet)
 void Channels::setVisibleSet(bool visibleSet)
 {
     this->visibleSet = visibleSet;
+}
+
+void Channels::addmode(std::string mode)
+{
+    this->mode += mode;
 }
 
 // // ============================ getters bool ============================

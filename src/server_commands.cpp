@@ -268,7 +268,7 @@ bool Server::irc_privmsg_notice(int fd, s_command &c)
             }            
             if ((*it)[0] == '#')
             {
-                sendToChannel(*it, msg);
+                send_msg_to_Channel(*it, msg, fd);
                 continue;
             }
             

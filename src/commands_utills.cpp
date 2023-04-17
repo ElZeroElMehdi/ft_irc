@@ -46,6 +46,7 @@ std::vector<IRCCommand> commands_list()
     rep.push_back((IRCCommand){"PING", 1});
     rep.push_back((IRCCommand){"INVITE", 1});
     rep.push_back((IRCCommand){"KICK", 1});
+    rep.push_back((IRCCommand){"MODE", 1});
     return rep;
 }
 
